@@ -1,0 +1,134 @@
+body {
+  font-family: Roboto, sans-serif;
+}
+
+.trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.3);
+}
+.ant-layout {
+  min-height: 100vh;
+}
+
+/*
+Tamaño del slider
+*/
+.ant-layout-sider {
+  flex: 0 0 250px !important;
+  max-width: 250px !important;
+  min-width: 250px !important;
+  width: 250px !important;
+}
+.ant-layout-sider-collapsed {
+  flex: 0 0 80px !important;
+  max-width: 80px !important;
+  min-width: 80px !important;
+  width: 80px !important;
+}
+.logo {
+  display: flex;
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  height: 40px; /* Ajusta la altura según tus necesidades */
+  background-color: #060F17;
+  border-bottom: 2px solid #E6E950; /* Añade una línea de borde inferior de 1 píxel de ancho y color blanco */
+}
+
+.sm-logo {
+  width: 40px;
+  height: 40px;
+}
+
+
+.ant-layout-sider-collapsed .sm-logo {
+  display: block;
+}
+.ant-layout-sider-collapsed .lg-logo {
+  display: none;
+}
+.logo {
+  margin: 0;
+  height: 64px;
+  align-items: center;
+}
+
+.lg-logo{
+  color: #E6E950;
+}
+
+.ant-layout-sider-collapsed .sm-logo {
+  display: block;
+  color: #E6E950;
+}
+
+main {
+  height: 85vh;
+  overflow-y: scroll;
+  background-color: transparent !important;
+  border: 2px solid #00000014;
+  border-radius: 10px;
+}
+main::-webkit-scrollbar {
+  width: 0px;
+}
+.ant-menu-title-content {
+  font-size: 16px;
+}
+.ant-layout-header h5 {
+  line-height: 20px;
+  font-size: 14px;
+}
+.ant-layout-header p {
+  line-height: 20px;
+  font-size: 13px;
+}
+.ant-layout-header div .badge {
+  top: 16px;
+  right: -6px;
+}
+.error {
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 0 15px;
+  background-color: rgb(219, 3, 3);
+  width: fit-content;
+  border-radius: 0 0 25px 25px;
+}
+
+:where(.css-dev-only-do-not-override-1qhpsh8).ant-select-multiple {
+  font-size: 14px;
+  padding: inherit;
+  width: 150px;
+}
+
+.confirmation-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-preview {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.color-name {
+  font-size: 18px;
+  font-weight: bold;
+}
