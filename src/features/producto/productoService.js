@@ -30,8 +30,8 @@ const getProductByCategory = async (categoryId) => {
     return response.data;
 }
 
-const getProductBySize = async (sizeId) => {
-  const response = await axios.get(`${base_url}producto?variaciones.tallas=${sizeId}`);
+const getProductByMarca = async (marcaId) => {
+  const response = await axios.get(`${base_url}producto?marca_auto=${marcaId}`);
   return response.data;
 }
 
@@ -70,7 +70,7 @@ const productService = {
   createProduct,
   deleteProduct,
   getProductByCategory,
-  getProductBySize,
+  getProductByMarca,
   getProductByColor,
 };
 

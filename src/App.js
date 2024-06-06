@@ -17,7 +17,7 @@ import MainLayout from "./components/MainLayout";
 // import Sellerlist from "./pages/Sellerlist";
 // import Addsize from "./pages/Addsize";
 // import Sizelist from "./pages/Sizelist";
-// import Productlist from "./pages/Productlist";
+import Productlist from "./pages/Productlist";
 // import Addproduct from "./pages/Addproduct";
 // import Viewproduct from "./pages/Viewproduct";
 // import ViewproductCliente from "./pages/ViewproductCliente";
@@ -26,7 +26,6 @@ import MainLayout from "./components/MainLayout";
  import Marcaautolist from "./pages/Marcaautolist";
  import Serviciosmantreplist from "./pages/Serviciosmantreplist";
  import Agregarproducto from "./pages/Agregarproducto";
- import Agregarproducto2 from "./pages/agregarproducto2";
 // import AssociatedProducts from "./pages/AssociatedProducts";
 // import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
 // import Womenproduct from "./pages/Womenproduct";
@@ -103,7 +102,7 @@ function App() {
               <Route path="lista-marcas-de-autos" element={<Marcaautolist />} />
               <Route path="lista-servicios-mantenimiento-y-reparacion" element={<Serviciosmantreplist />} />
               <Route path="producto" element={<Agregarproducto />} />
-              <Route path="lista-productos" element={<Agregarproducto2 />} />
+              <Route path="lista-productos" element={<Productlist />} />
             </Route>
             {/* cierreadmin */}
           </Routes>

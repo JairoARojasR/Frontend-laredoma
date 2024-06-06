@@ -151,7 +151,8 @@ const getUserfromLocalStorage = localStorage.getItem("user")
   : null;
 
 const initialState = {
-  users: getUserfromLocalStorage,
+  users: [],
+  getusers:"",
   isError: false,
   isLoading: false,
   isSuccess: false,

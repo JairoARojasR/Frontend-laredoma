@@ -10,7 +10,7 @@ import marcaService from "../features/marca_auto/marcaautoService";
 import productService from "../features/producto/productoService";
 import { deleteMarcaauto, getMarcasauto, resetState, updateMarcaauto, createMarcaauto } from "../features/marca_auto/marcaautoSlice";
 import CustomModal from "../components/CustomModal";
-import { updateAUser } from "../features/usuario/usuarioSlice";
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const EditableCell = ({
   editing,
@@ -48,6 +48,12 @@ const Marcaautolist = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMarcaName, setNewMarcaName] = useState("");
   const dispatch = useDispatch();
+  const newMarca = useSelector((state) => state.marcaauto);
+  const {
+    isSuccess,
+    isError,
+    message,
+  } = newMarca;
 
   const showModal = (categoryId) => {
     setOpen(true);
@@ -57,7 +63,7 @@ const Marcaautolist = () => {
   const hideModal = () => {
     setOpen(false);
   };
-
+ 
   const handleSwitchChange = async (categoryId, property, checked) => {
     try {
       await marcaService.updateMarcaauto({
@@ -69,12 +75,12 @@ const Marcaautolist = () => {
       dispatch(getMarcasauto());
 
       const message = checked
-        ? `La categoría está ${property} actualmente`
-        : `La categoría no está ${property} actualmente`;
+        ? `La marca de auto está ${property} actualmente`
+        : `La marca de auto no está ${property} actualmente`;
 
       toast.success(message);
     } catch (error) {
-      const errorMessage = `Error al cambiar el estado de ${property} de la categoría`;
+      const errorMessage = `Error al cambiar el estado de ${property} de la marca de auto`;
       toast.error(errorMessage);
     }
   };
@@ -132,33 +138,38 @@ const Marcaautolist = () => {
   const save = async (key) => {
     try {
       const row = await form.validateFields();
-      // Dispatch update action
-      await dispatch(updateMarcaauto({ id: key, marcaData: row }));
+      // Dispatch update action and unwrap result
+      const resultAction = await dispatch(updateMarcaauto({ id: key, marcaData: row }));
+      const result = unwrapResult(resultAction);
+
       setEditingKey('');
-      dispatch(getMarcasauto()); // Refresh the data after updating
-      toast.success('Categoría actualizada exitosamente!');
+
+      if (resultAction.type.endsWith('fulfilled')) {
+        toast.success('Marca de auto actualizada exitosamente!');
+      } 
+      dispatch(getMarcasauto());
     } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
+      toast.error("La marca de auto ya existe")
     }
   };
 
-  const deleteMarcaauto = async (categoryId) => {
+  const handledeleteMarcaauto = async (marcaId) => {
     try {
-      const productsInCategory = await productService.getProductByCategory(categoryId);
+      const productsInMarca = await productService.getProductByMarca(marcaId);
 
-      if (productsInCategory.length > 0) {
+      if (productsInMarca.length > 0) {
         toast.error(
-          `No se puede eliminar la categoría porque está asociada a ${productsInCategory.length} productos.`
+          `No se puede eliminar la marca de auto porque está asociada a ${productsInMarca.length} productos.`
         );
       } else {
-        await dispatch(deleteMarcaauto(categoryId));
+        await dispatch(deleteMarcaauto(marcaId));
         setOpen(false);
         dispatch(getMarcasauto());
-        toast.success("Categoría eliminada exitosamente!");
+        toast.success("Marca de auto eliminada exitosamente!");
       }
     } catch (error) {
-      console.error("Error al intentar eliminar la categoría:", error);
-      toast.error("Error al intentar eliminar la categoría.");
+      console.error("Error al intentar eliminar la marca de auto:", error);
+      toast.error("Error al intentar eliminar la marca de auto.");
     }
   };
 
@@ -167,16 +178,18 @@ const Marcaautolist = () => {
       toast.error("El nombre de la marca no puede estar vacío.");
       return;
     }
-    
+
     try {
-      await dispatch(createMarcaauto({ nombre: newMarcaName }));
+      const resultAction = await dispatch(createMarcaauto({ nombre: newMarcaName }));
       setIsModalOpen(false);
       setNewMarcaName("");
       dispatch(getMarcasauto()); // Refresh the data after adding
-      toast.success('Marca de auto agregada exitosamente!');
+
+      if (resultAction.type.endsWith('fulfilled')) {
+        toast.success('Marca de auto agregada exitosamente!');
+      } 
     } catch (error) {
-      console.error("Error al agregar la marca de auto:", error);
-      toast.error("Error al agregar la marca de auto.");
+      toast.error("La marca de auto ya existe");
     }
   };
 
@@ -211,7 +224,7 @@ const Marcaautolist = () => {
               type="primary"
               style={{ marginRight: 8 }}
             />
-            <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => deleteMarcaauto(record.key)} okText="Sí" cancelText="No">
+            <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteMarcaauto(record.key)} okText="Sí" cancelText="No">
               <button className="ms-3 fs-3 text-danger bg-transparent border-0">
                 <AiFillDelete />
               </button>
@@ -221,7 +234,7 @@ const Marcaautolist = () => {
       },
     },
   ];
-  
+
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -257,7 +270,7 @@ const Marcaautolist = () => {
       <CustomModal
         hideModal={hideModal}
         open={open}
-        performAction={() => deleteMarcaauto(pCatId)}
+        performAction={() => handledeleteMarcaauto(pCatId)}
         title="¿Estás seguro de que quieres eliminar la marca de auto?"
       />
       <Modal
@@ -265,6 +278,7 @@ const Marcaautolist = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        okText="Agregar" cancelText="Cancelar"
       >
         <Form layout="vertical">
           <Form.Item label="Nombre" required>

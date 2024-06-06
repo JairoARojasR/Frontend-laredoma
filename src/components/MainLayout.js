@@ -3,15 +3,17 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
-import { FaUser,  FaClipboardList, FaTshirt} from "react-icons/fa";
+import { SiMazda } from "react-icons/si";
+import { FaUser, FaTshirt, FaUserTag} from "react-icons/fa";
 import axios from "axios";
-import { FaListCheck } from "react-icons/fa6";
-import { MdOutlineDashboardCustomize,MdOutlineInventory, MdOutlineFormatColorFill} from "react-icons/md";
+import { FaListCheck , FaClipboardList} from "react-icons/fa6";
+import { GiMechanicGarage } from "react-icons/gi";
+import { MdOutlineDashboardCustomize,MdOutlineInventory, MdOutlineFormatColorFill, MdElectricCar } from "react-icons/md";
 import { RiDashboardFill } from "react-icons/ri";
 import { TiThList } from "react-icons/ti";
 import { FaUsers } from "react-icons/fa";
 //import "./MainLayout.module.css";
-import "../styles/custom.css"
+//import "../styles/custom.css"
 import { config } from "../utils/axiosconfig";
 import { base_url } from "../utils/baseUrl";
 import { ToastContainer } from "react-toastify";
@@ -20,10 +22,12 @@ import { Link, useLocation } from "react-router-dom";
 //import userService from "../features/usuario/usuarioService";
 import { Outlet} from "react-router-dom";
 import { IoIosNotifications, IoMdListBox } from "react-icons/io";
+import { BiSolidCarMechanic, BiSolidCategory, BiSolidCarBattery  } from "react-icons/bi";
 import { Layout, Menu, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 import Logo from '../images/logo madais.png';
 import userSvg from '../images/user-solid.svg'
+import "../styles/custom.css"
 const { Header, Sider, Content } = Layout;
 
 const MainLayout = () => {
@@ -76,7 +80,7 @@ const MainLayout = () => {
         <div className="logo">
           <h2 className="text-white fs-5 text-center py-3 mb-0">
             {collapsed ? (
-              <img src={Logo} alt="Logo" className="sm-logo" />
+              <h3>A&S</h3>
             ) : (
               <>
                 <span className="lg-logo">A&S LA REDOMA</span>
@@ -98,13 +102,32 @@ const MainLayout = () => {
           items={[
             {
               key: "customers",
-              icon: <FaUser className="fs-4" />,
+              icon: <FaUserTag className="fs-4" />,
               label: "Clientes",
               children: [
                 {
                   key: "usuarios",
                   icon: <FaUsers className="fs-4" />,
                   label: "Lista de Clientes",
+                }
+              ]
+            },
+
+            {
+              key: "mecanico",
+              icon: <GiMechanicGarage className="fs-4" />,
+              label: "Mecanicos",
+              children: [
+                {
+                  key: "mecanicos",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Agregar Mecanicos",
+                },
+
+                {
+                  key: "lista-mecanicos",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Lista de Mecanicos",
                 }
               ]
             },
@@ -135,7 +158,7 @@ const MainLayout = () => {
               children: [
                 {
                   key: "producto",
-                  icon: <AiOutlineShoppingCart className="fs-4" />,
+                  icon: <BiSolidCarBattery className="fs-4" />,
                   label: "Agregar Productos",
                 },
                 {
@@ -143,34 +166,24 @@ const MainLayout = () => {
                   icon: <FaClipboardList className="fs-4" />,
                   label: "Lista de Productos",
                 },
-                {
-                  key: "talla",
-                  icon: <FaTshirt className="fs-4" />,
-                  label: "Agregar Tallas",
-                },
-                {
-                  key: "lista-tallas",
-                  icon: <TiThList className="fs-4" />,
-                  label: "Lista de Tallas",
-                },
-                {
-                  key: "categoria",
-                  icon: <RiDashboardFill className="fs-4" />,
-                  label: "Agregar Categorias",
-                },
+                // {
+                //   key: "categoria",
+                //   icon: <RiDashboardFill className="fs-4" />,
+                //   label: "Agregar Categorias",
+                // },
                 {
                   key: "lista-categorias",
-                  icon: <IoMdListBox className="fs-4" />,
-                  label: "Lista de Categorias",
+                  icon: <BiSolidCategory className="fs-4" />,
+                  label: "Categorias",
                 },
                 {
                   key: "lista-marcas-de-autos",
-                  icon: <FaListCheck className="fs-4" />,
+                  icon: <SiMazda className="fs-4" />,
                   label: "Marcas de Autos",
                 },
                 {
                   key: "lista-servicios-mantenimiento-y-reparacion",
-                  icon: <FaListCheck className="fs-4" />,
+                  icon: <BiSolidCarMechanic className="fs-4" />,
                   label: "Servicios de Mantenimiento y Reparacion",
                 },
               ],

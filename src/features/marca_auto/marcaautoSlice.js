@@ -18,6 +18,7 @@ export const createMarcaauto = createAsyncThunk(
     try {
       return await MarcaautoService.createMarcasauto(marcaData);
     } catch (error) {
+      console.log("error ccc",error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -103,7 +104,7 @@ export const marcaautoSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.response.data.message;
         state.isExisting = true;
       })
 

@@ -5,6 +5,7 @@ import { base_url } from "../../utils/baseUrl";
 const getUsers = async () => {
   //listo
   const response = await axios.get(`${base_url}persona/`);
+  console.log("RESPONSE", response.data);
   return response.data;
 };
 
