@@ -19,7 +19,7 @@ import { base_url } from "../utils/baseUrl";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useLocation } from "react-router-dom";
-//import userService from "../features/usuario/usuarioService";
+import userService from "../features/usuario/usuarioService";
 import { Outlet} from "react-router-dom";
 import { IoIosNotifications, IoMdListBox } from "react-icons/io";
 import { BiSolidCarMechanic, BiSolidCategory, BiSolidCarBattery  } from "react-icons/bi";
@@ -39,40 +39,40 @@ const MainLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-//   const handleLogoutClick = async () => {
-//     try {
-//       await userService.logoutUser();
-//       return navigate("/login");
-//     } catch (error) {
-//       console.error('Error during logout:', error);
-//     }
-//   };
+  const handleLogoutClick = async () => {
+    try {
+      await userService.logoutUser();
+      return navigate("/login");
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const token = config.headers.Authorization.split(" ")[1];
-//         if (token) {
-//           const response = await axios.get(`${base_url}usuario/getTokenData/${token}`);
-//           const correo = response.data.data.correo;
-//           const nombre = response.data.data.nombre;
-//           setUserData({ email: correo, name: nombre });
-//         }
-//       } catch (error) {
-//         console.error('Error fetching user data:', error);
-//       }
-//     };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = config.headers.Authorization.split(" ")[1];
+        if (token) {
+          const response = await axios.get(`${base_url}persona/getTokenData/${token}`);
+          const correo = response.data.data.correo;
+          const nombre = response.data.data.nombre;
+          setUserData({ email: correo, name: nombre });
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
 
-//     fetchData();
-//   }, []);
+    fetchData();
+  }, []);
 
-//   useEffect(() => {
-//     const token = localStorage.getItem("user");
+//  useEffect(() => {
+//   const token = localStorage.getItem("user");
 
-//     if (!token && location.pathname ==="/admin") {
-//       navigate("/login");
-//     }
-//   }, [location, navigate]);
+//   if (!token && location.pathname ==="/admin" && location.pathname !== "/login") {
+//     navigate("/login");
+//   }
+// }, [location, navigate]);
 
   return (
     <Layout onContextMenu={(e) => e.preventDefault()} >
@@ -94,7 +94,7 @@ const MainLayout = () => {
           defaultSelectedKeys={[""]}
           onClick={({ key }) => {
             if (key === "signout") {
-              //handleLogoutClick();
+              handleLogoutClick();
             } else {
               navigate(key);
             }
@@ -240,7 +240,7 @@ const MainLayout = () => {
                   <Link
                     className="dropdown-item py-1 mb-1"
                     style={{ height: "auto", lineHeight: "20px" }}
-                //    onClick={handleLogoutClick}
+                    onClick={handleLogoutClick}
                     to="/login"
                   >
                     Salir

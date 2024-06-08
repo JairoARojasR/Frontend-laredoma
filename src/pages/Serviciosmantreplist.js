@@ -8,11 +8,9 @@ import { toast } from "react-toastify";
 import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
 import servicioService from "../features/serviciosmantrep/serviciosmantrepService";
 import productService from "../features/producto/productoService";
-import { deleteServiciomantrep, getServiciosmantrep, resetState, updateServiciomantrep } from "../features/serviciosmantrep/serviciosmantrepSlice";
+import { createServiciomantrep, deleteServiciomantrep, getServiciosmantrep, resetState, updateServiciomantrep } from "../features/serviciosmantrep/serviciosmantrepSlice";
 import CustomModal from "../components/CustomModal";
 import { unwrapResult } from '@reduxjs/toolkit';
-
-
 
 const EditableCell = ({
   editing,
@@ -47,7 +45,8 @@ const Serviciosmantreplist = () => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   const [open, setOpen] = useState(false);
-  const [newMarcaName, setNewMarcaName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newServicioName, setNewServicioName] = useState("");
   const [pCatId, setpCatId] = useState("");
   const dispatch = useDispatch();
 
@@ -56,14 +55,38 @@ const Serviciosmantreplist = () => {
     setpCatId(categoryId);
   };
 
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleOk = async () => {
+    if (!newServicioName.trim()) {
+      toast.error("El nombre del servicio no puede estar vacío.");
+      return;
+    }
+
+    try {
+      const resultAction = await dispatch(createServiciomantrep({ nombre: newServicioName }));
+      setIsModalOpen(false);
+      setNewServicioName("");
+      dispatch(getServiciosmantrep()); // Refresh the data after adding
+
+      if (resultAction.type.endsWith('fulfilled')) {
+        toast.success('Servicio agregado exitosamente!');
+      } 
+    } catch (error) {
+      toast.error("El Servicio ya existe");
+    }
+  };
+
   const hideModal = () => {
     setOpen(false);
   };
 
-  const handleSwitchChange = async (categoryId, property, checked) => {
+  const handleSwitchChange = async (servicioId, property, checked) => {
     try {
       await servicioService.updateServiciosmantrep({
-        id: categoryId,
+        id: servicioId,
         pCatData: {
           [property]: checked,
         },
@@ -80,14 +103,12 @@ const Serviciosmantreplist = () => {
     }
   };
 
-
   useEffect(() => {
     dispatch(resetState());
     dispatch(getServiciosmantrep());
   }, [dispatch]);
 
 
-  
   const save = async (key) => {
     try {
       const row = await form.validateFields();
@@ -98,26 +119,26 @@ const Serviciosmantreplist = () => {
       setEditingKey('');
 
       if (resultAction.type.endsWith('fulfilled')) {
-        toast.success('Marca de auto actualizada exitosamente!');
+        toast.success('Servicio actualizado exitosamente!');
       } 
       dispatch(getServiciosmantrep());
     } catch (errInfo) {
-      toast.error("La marca de auto ya existe")
+      toast.error("El Servicio ya existe")
     }
   };
 
   const servicios = useSelector((state) => state.serviciosmantrep.servicios);
-  const data = servicios.map((categoria, index) => ({
-    key: categoria._id,
-    nombre: categoria.nombre,
+  const data = servicios.map((servicio, index) => ({
+    key: servicio._id,
+    nombre: servicio.nombre,
     estado: (
       <Space direction="vertical">
         <Switch
           checkedChildren={<CheckOutlined />}
           unCheckedChildren={<CloseOutlined />}
-          defaultChecked={categoria.activo}
+          defaultChecked={servicio.activo}
           onChange={(checked) =>
-            handleSwitchChange(categoria._id, "activo", checked)
+            handleSwitchChange(servicio._id, "activo", checked)
           }
         />
       </Space>
@@ -125,14 +146,14 @@ const Serviciosmantreplist = () => {
     action: (
       <>
         <Link
-          to={`/admin/categoria/${categoria._id}`}
+          to={`/admin/categoria/${servicio._id}`}
           className=" fs-3 text-danger"
         >
           <BiEdit />
         </Link>
         <button
           className="ms-3 fs-3 text-danger bg-transparent border-0"
-          onClick={() => showModal(categoria._id)}
+          onClick={() => showModal(servicio._id)}
         >
           <AiFillDelete />
         </button>
@@ -151,23 +172,23 @@ const Serviciosmantreplist = () => {
     setEditingKey('');
   };
 
-  const deleteCategory = async (categoryId) => {
+  const handledeleteServicios = async (servicioId) => {
     try {
-      const productsInCategory = await productService.getProductByCategory(categoryId);
+      const productsInMarca = await productService.getProductByServicios(servicioId);
 
-      if (productsInCategory.length > 0) {
+      if (productsInMarca.length > 0) {
         toast.error(
-          `No se puede eliminar la categoría porque está asociada a ${productsInCategory.length} productos.`
+          `No se puede eliminar la marca de auto porque está asociada a ${productsInMarca.length} productos.`
         );
       } else {
-        await dispatch(deleteServiciomantrep(categoryId));
+        await dispatch(deleteServiciomantrep(servicioId));
         setOpen(false);
         dispatch(getServiciosmantrep());
-        toast.success("Categoría eliminada exitosamente!");
+        toast.success("Marca de auto eliminada exitosamente!");
       }
     } catch (error) {
-      console.error("Error al intentar eliminar la categoría:", error);
-      toast.error("Error al intentar eliminar la categoría.");
+      console.error("Error al intentar eliminar la marca de auto:", error);
+      toast.error("Error al intentar eliminar la marca de auto.");
     }
   };
 
@@ -198,11 +219,11 @@ const Serviciosmantreplist = () => {
               type="primary"
               style={{ marginRight: 8 }}
             />
-            {/* <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteMarcaauto(record.key)} okText="Sí" cancelText="No">
+             <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteServicios(record.key)} okText="Sí" cancelText="No">
               <button className="ms-3 fs-3 text-danger bg-transparent border-0">
                 <AiFillDelete />
               </button>
-            </Popconfirm> */}
+            </Popconfirm> 
           </span>
         );
       },
@@ -228,10 +249,10 @@ const Serviciosmantreplist = () => {
 
   return (
     <div>
-      <h3 className="mb-4 title">Lista de Marcas de Autos</h3>
-      {/* <Button type="primary" onClick={() => setIsModalOpen(true)} style={{ marginBottom: 16 }}>
-        Agregar Marca
-      </Button> */}
+      <h3 className="mb-4 title">Lista de Servicios</h3>
+      <Button type="primary" onClick={() => setIsModalOpen(true)} style={{ marginBottom: 16 }}>
+        Agregar Servicio
+      </Button> 
       <Form form={form} component={false}>
         <Table
           components={{ body: { cell: EditableCell } }}
@@ -245,10 +266,10 @@ const Serviciosmantreplist = () => {
       <CustomModal
         hideModal={hideModal}
         open={open}
-        //performAction={() => handledelete(pCatId)}
+        performAction={() => handledeleteServicios(pCatId)}
         title="¿Estás seguro de que quieres eliminar la marca de auto?"
       />
-      {/* <Modal
+       <Modal
         title="Agregar Marca de Auto"
         open={isModalOpen}
         onOk={handleOk}
@@ -257,10 +278,10 @@ const Serviciosmantreplist = () => {
       >
         <Form layout="vertical">
           <Form.Item label="Nombre" required>
-            <Input value={newMarcaName} onChange={(e) => setNewMarcaName(e.target.value)} />
+            <Input value={newServicioName} onChange={(e) => setNewServicioName(e.target.value)} />
           </Form.Item>
         </Form>
-      </Modal> */}
+      </Modal> 
     </div>
   );
 };

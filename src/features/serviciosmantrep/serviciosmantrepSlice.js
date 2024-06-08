@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
-import serviciosService from "./serviciosmantrepService";
+import serviciosmantrepService from "./serviciosmantrepService";
 
 export const getServiciosmantrep = createAsyncThunk(
-  "productCategory/get-categorias",
+  "servicio/get-servicios",
   async (thunkAPI) => {
     try {
-      return await serviciosService.getServiciosmantrep();
+      return await serviciosmantrepService.getServiciosmantrep();
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -13,20 +13,20 @@ export const getServiciosmantrep = createAsyncThunk(
 );
 
 export const createServiciomantrep = createAsyncThunk(
-  "productCategory/create-category",
+  "servicio/create-servicio",
   async (servicioData, thunkAPI) => {
     try {
-      return await serviciosService.createCategoria(servicioData);
+      return await serviciosmantrepService.createServiciosmantrep(servicioData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 export const updateServiciomantrep = createAsyncThunk(
-  "productCategory/update-category",
+  "servicio/update-servicio",
   async (categoria, thunkAPI) => {
     try {
-      return await serviciosService.updateCategoria(categoria);
+      return await serviciosmantrepService.updateServiciosmantrep(categoria);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -34,20 +34,21 @@ export const updateServiciomantrep = createAsyncThunk(
 );
 
 export const deleteServiciomantrep = createAsyncThunk(
-  "productCategory/delete-category",
+  "servicio/delete-servicio",
   async (id, thunkAPI) => {
     try {
-      return await serviciosService.deleteServiciosmantrep(id);
+      return await serviciosmantrepService.deleteServiciosmantrep(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
+
 export const getServiciomantrep = createAsyncThunk(
-  "productCategory/get-product-category",
+  "servicio/getmarca",
   async (id, thunkAPI) => {
     try {
-      return await serviciosService.getServiciomantrep(id);
+      return await serviciosmantrepService.getServiciomantrep(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -99,7 +100,7 @@ export const serviciosmantrepSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.response.data.message;
         state.isExisting = true;
       })
       .addCase(updateServiciomantrep.pending, (state) => {

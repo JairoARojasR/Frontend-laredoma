@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 import React, { createContext, useState, useEffect } from "react";
-//import Login from "./pages/Login";
+import Login from "./pages/Login";
 import MainLayout from "./components/MainLayout";
 // import Colorlist from "./pages/Colorlist";
 // import Addcolor from "./pages/Addcolor";
@@ -27,13 +27,13 @@ import Productlist from "./pages/Productlist";
  import Serviciosmantreplist from "./pages/Serviciosmantreplist";
  import Agregarproducto from "./pages/Agregarproducto";
 // import AssociatedProducts from "./pages/AssociatedProducts";
-// import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
+ import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
 // import Womenproduct from "./pages/Womenproduct";
 // import Manproduct from "./pages/Manproduct";
-// import LoginFormp from "./components/LoginFormp";
-// import OTPInput from "./pages/OTPInput";
-// import Recovered from "./pages/Recovered";
-// import Reset from "./pages/Reset";
+ import LoginFormp from "./components/LoginFormp";
+ import OTPInput from "./pages/OTPInput";
+ import Recovered from "./pages/Recovered";
+ import Reset from "./pages/Reset";
 // import Store from "./pages/Store";
 // import ViewProfile from "./pages/viewProfile";
 // import ViewProfileAdmin from "./pages/ViewProfileAdmin";
@@ -44,58 +44,50 @@ import Productlist from "./pages/Productlist";
 export const RecoveryContext = createContext();
 
 function App() {
-  // const [page, setPage] = useState("loginFormp");
-  // const [email, setEmail] = useState();
-  // const [otp, setOTP] = useState();
+   const [page, setPage] = useState("loginFormp");
+   const [email, setEmail] = useState();
+  const [otp, setOTP] = useState();
 
-  // function NavigateComponents() {
-  //   if (page === "otp") return <OTPInput />;
-  //   if (page === "reset") return <Reset />;
-  //   //  return <Recovered />;
-  // }
+  function NavigateComponents() {
+  if (page === "otp") return <OTPInput />;
+    if (page === "reset") return <Reset />;
+    return <Recovered />;
+   }
 
-  // useEffect(() => {
-  //   // Obtener el email y el OTP del localStorage al cargar la aplicación
-  //   const storedEmail = localStorage.getItem("email");
-  //   const storedOTP = localStorage.getItem("otp");
+  useEffect(() => {
+    // Obtener el email y el OTP del localStorage al cargar la aplicación
+    const storedEmail = localStorage.getItem("email");
+    const storedOTP = localStorage.getItem("otp");
 
-  //   // Verificar si se han recuperado los valores del email y del OTP
-  //   if (storedEmail && storedOTP) {
-  //     // Establecer los valores recuperados en el estado
-  //     setEmail(storedEmail);
-  //     setOTP(storedOTP);
-  //   }
-  // }, []);
+    // Verificar si se han recuperado los valores del email y del OTP
+    if (storedEmail && storedOTP) {
+      // Establecer los valores recuperados en el estado
+      setEmail(storedEmail);
+      setOTP(storedOTP);
+    }
+  }, []);
 
   return (
-    <RecoveryContext.Provider>
+    <RecoveryContext.Provider
+    value={{ page, setPage, otp, setOTP, setEmail, email }}
+    >
       <Router>
         <div>
           <Routes>
+           {/* login */}
+           <Route
+              path="/usuario/confirmar/:token"
+              element={<ConfirmacionUsuario />}
+            />
+            <Route path="/confirmar-codigo" element={<OTPInput />} />
+            <Route path="/nueva-contrasenia" element={<Reset />} />
+            <Route path="/contrasenia-recuperada" element={<Recovered />} />
+            <Route path="/login" element={<Login />} />
+
+
             {/* admin */}
 
             <Route path="/admin" element={<MainLayout />}>
-              {/* <Route path="list-color" element={<Colorlist />} />
-              <Route path="color" element={<Addcolor />} />
-              <Route path="color/:id" element={<Addcolor />} />
-              <Route path="lista-categorias" element={<Categorylist />} />
-              <Route path="categoria" element={<Addcategory />} />
-              <Route path="categoria/:id" element={<Addcategory />} />
-              <Route path="lista-tallas" element={<Sizelist />} />
-              <Route path="talla" element={<Addsize />} />
-              <Route path="talla/:id" element={<Addsize />} />
-              <Route path="vendedor" element={<AddSeller />} />
-              <Route path="vendedor/:id" element={<AddSeller />} />
-              <Route path="lista-vendedores" element={<Sellerlist />} />
-              <Route path="lista-productos" element={<Productlist />} />
-              <Route path="producto" element={<Addproduct />} />
-              <Route path="producto/:id" element={<Addproduct />} />
-              <Route path="ver-producto/:id" element={<Viewproduct />} />
-              <Route path="ver-cliente/:correo" element={<ViewCustomer />} />
-              <Route path="/admin/ver-Perfil" element={<ViewProfileAdmin />} />
-              <Route path="ver-vendedor/:correo" element={<ViewSeller />} />
-              <Route path="categoria/:id/productos" element={<AssociatedProducts />}
-              />*/}
               <Route index element={<Userlist />} />
               <Route path="usuarios" element={<Userlist />} /> 
               <Route path="lista-categorias" element={<Categorialist />} />

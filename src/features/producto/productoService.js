@@ -35,6 +35,11 @@ const getProductByMarca = async (marcaId) => {
   return response.data;
 }
 
+const getProductByServicios = async (serviciosId) => {
+  const response = await axios.get(`${base_url}producto?servicios=${serviciosId}`);
+  return response.data;
+}
+
 const getProductByColor = async (colorId) => {
   const response = await axios.get(`${base_url}producto?variaciones.color=${colorId}`);
   return response.data;
@@ -70,6 +75,7 @@ const productService = {
   createProduct,
   deleteProduct,
   getProductByCategory,
+  getProductByServicios,
   getProductByMarca,
   getProductByColor,
 };

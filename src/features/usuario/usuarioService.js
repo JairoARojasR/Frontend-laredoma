@@ -78,12 +78,13 @@ const loginUser = async (loginData) => {
 };
 
 const logoutUser = async () => {
-    const response = await axios.get(`${base_url}persona/logout`);
-    localStorage.removeItem("user");
-    console.log("localstorage",localStorage);
-    config.headers.Authorization="";
-    return response.data;
+  const response = await axios.get(`${base_url}persona/logout`);
+  localStorage.removeItem("user");
+  console.log("localstorage",localStorage);
+  config.headers.Authorization="";
+  return response.data;
 };
+
   
 const updateUser = async (user) => {//listo
   const response = await axios.put(
