@@ -144,14 +144,14 @@ export const productoSlice = createSlice({
         state.isSuccess = true;
         state.productName = action.payload.nombre;
         state.productDescription = action.payload.descripcion;
+        state.productCant = action.payload.cantidad_disponible;
+        state.productUbicacion = action.payload.ubicacion;
         state.productPrice = action.payload.precio;
         state.productCategory = action.payload.categoria;
         state.productReference = action.payload.referencia;
         state.productMarca = action.payload.marca_auto;
-        state.productProv = action.payload.proveedor;
+        state.productProv = action.payload.proveedores;
         state.productImg = action.payload.imagenes;
-        state.productCant = action.payload.cantidad_disponible;
-        state.productUbicacion = action.payload.ubicacion;
       })
       .addCase(getAProduct.rejected, (state, action) => {
         state.isLoading = false;

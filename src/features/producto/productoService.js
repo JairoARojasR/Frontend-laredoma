@@ -51,17 +51,16 @@ const updateProduct = async (product) => {//listo
     {
       nombre: product.productData.nombre,
       descripcion: product.productData.descripcion,
+      cantidad_disponible: product.productData.cantidad_disponible,
+      ubicacion: product.productData.ubicacion,
       precio: product.productData.precio,
-      precioConDescuento: product.productData.precioConDescuento,
-      descuento: product.productData.descuento,
-      cinta: product.productData.cinta,
       categoria: product.productData.categoria,
-      variaciones: product.productData.variaciones,
-      activo: product.productData.activo,
-      visible: product.productData.visible,
       referencia: product.productData.referencia,
-      genero: product.productData.genero,
-      tipoTela: product.productData.tipoTela
+      marca_auto: product.productData.marca_auto,
+      imagenes: product.productData.imagenes,      
+      activo: product.productData.activo,
+      proveedores: product.productData.proveedores,
+      referencia: product.productData.referencia,
     },
     config
   );

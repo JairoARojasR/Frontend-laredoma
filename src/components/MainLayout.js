@@ -152,6 +152,25 @@ const MainLayout = () => {
             },
 
             {
+              key: "proveedores",
+              icon: <FaUser className="fs-4" />,
+              label: "Proveedor",
+              children: [
+                {
+                  key: "proveedor",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Agregar proveedor",
+                },
+
+                {
+                  key: "lista-proveedores",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Lista de proveedores",
+                }
+              ]
+            },
+
+            {
               key: "Catalog",
               icon: <MdOutlineInventory className="fs-4" />,
               label: "Inventario",

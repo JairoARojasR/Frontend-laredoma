@@ -25,18 +25,32 @@ export const createUser = createAsyncThunk(
   }
 );
 
-export const createSeller = createAsyncThunk(
+export const createProveedor = createAsyncThunk(
   //listo
-  "user/create-seller",
+  "user/create-proveedor",
   async (userData, thunkAPI) => {
     try {
-      return await userService.createSeller(userData);
+      return await userService.createProveedor(userData);
     } catch (error) {
      // console.log(error.response.data.message);
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
+
+export const createEmpleado = createAsyncThunk(
+  //listo
+  "user/create-empleado",
+  async (userData, thunkAPI) => {
+    try {
+      return await userService.createEmpleado(userData);
+    } catch (error) {
+     // console.log(error.response.data.message);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 
 export const resetPassword = createAsyncThunk(
   "user/reset-password",
@@ -113,9 +127,9 @@ export const deleteAUser = createAsyncThunk(
 
 export const getAUser = createAsyncThunk(
   "user/get-user",
-  async (correo , thunkAPI) => {
+  async (id , thunkAPI) => {
     try {
-      return await userService.getUser(correo);
+      return await userService.getUser(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -199,18 +213,39 @@ export const usuarioSlice = createSlice({
         state.isExisting = true; 
       })
 
-      .addCase(createSeller.pending, (state) => {
+      .addCase(createProveedor.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(createSeller.fulfilled, (state, action) => {
+      .addCase(createProveedor.fulfilled, (state, action) => {
+        console.log("Proveedor creado exitosamente:", action.payload);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
         state.createdUser = action.payload;
-        state.users = action.payload;
+        state.users.push(action.payload); // Agregar nuevo proveedor a la lista
         state.isExisting = false; // Actualiza isExisting con la información del servidor
       })
-      .addCase(createSeller.rejected, (state, action) => {
+      .addCase(createProveedor.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.payload.response.data.message;
+        state.isExisting = true; 
+      })
+
+      .addCase(createEmpleado.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createEmpleado.fulfilled, (state, action) => {
+        console.log("Proveedor creado exitosamente:", action.payload);
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.createdUser = action.payload;
+        state.users.push(action.payload); // Agregar nuevo proveedor a la lista
+        state.isExisting = false; // Actualiza isExisting con la información del servidor
+      })
+      .addCase(createEmpleado.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

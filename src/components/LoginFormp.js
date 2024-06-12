@@ -32,7 +32,8 @@ function LoginFormp() {
   const { setEmail, setPage, setOTP } = useContext(RecoveryContext);
   const [googleLoggedIn, setGoogleLoggedIn] = useState(false);
   const navigate = useNavigate();
-  const clientID = "967586754412-4jsvq7hnqkb5pfl30dbcpt93ghjfgn94.apps.googleusercontent.com";
+  const clientID =
+    "967586754412-4jsvq7hnqkb5pfl30dbcpt93ghjfgn94.apps.googleusercontent.com";
 
   const [loginData, setLoginData] = useState({
     correo: "",
@@ -45,12 +46,7 @@ function LoginFormp() {
   });
 
   const newUser = useSelector((state) => state.user);
-  const {
-    isSuccess,
-    isError,
-    users,
-    isExisting,
-  } = newUser;
+  const { isSuccess, isError, users, isExisting } = newUser;
 
   useEffect(() => {
     function start() {
@@ -81,7 +77,7 @@ function LoginFormp() {
       await schema2.validate(loginData, { abortEarly: false });
       const resultAction = await dispatch(loginUser(loginData));
       if (loginUser.fulfilled.match(resultAction)) {
-        navigate("/admin");  
+        navigate("/admin");
       }
       setLoginData({
         correo: "",
@@ -151,7 +147,9 @@ function LoginFormp() {
         recipient_email: loginData.correo,
       });
     } else {
-      alert("Por favor, ingrese su correo electrónico en el inicio de sesión para recuperar su cuenta");
+      alert(
+        "Por favor, ingrese su correo electrónico en el inicio de sesión para recuperar su cuenta"
+      );
       return;
     }
     navigate("/confirmar-codigo");
@@ -193,7 +191,9 @@ function LoginFormp() {
               onChange={handleLoginChange}
             />
             <div className={styles.error_message}>{errors2.contrasenia}</div>
-            <a href="" onClick={() => navigateToOtp()}>¿Olvidó la contraseña?</a>
+            <a href="" onClick={() => navigateToOtp()}>
+              ¿Olvidó la contraseña?
+            </a>
             <button className={styles.button_green} onClick={handleLoginUp}>
               Iniciar Sesión
             </button>
@@ -204,28 +204,16 @@ function LoginFormp() {
             <div className={`${styles.overlay_panel} ${styles.overlay_left}`}>
               <img src={logo} className={styles.logomadais} alt="" />
               <h1 className={styles.h1_alt}>¡Bienvenido de vuelta!</h1>
-              <p>
-                Inicia Sesión en tu cuenta personal para acceder a ofertas
-                exclusivas, seguir tus pedidos y vivir la experiencia completa
-                de Madais Sports.
-              </p>
-              <button
-                className={styles.button_blue}
-                onClick={() => {}}
-              >
+              <p>Prueba</p>
+              <button className={styles.button_blue} onClick={() => {}}>
                 Iniciar Sesión
               </button>
             </div>
             <div className={`${styles.overlay_panel} ${styles.overlay_right}`}>
               <img src={logo} className={styles.logomadais} alt="" />
-              <h1 className={styles.h1_alt}>
-                ¡Únete a la comunidad Madais Sports!
-              </h1>
-              <p>
-                Regístrate para acceder a nuestros artículos y recibir ofertas
-                exclusivas.
-              </p>
-              <p>¡Tu viaje hacia el rendimiento y el estilo comienza aquí!</p>
+              <h1 className={styles.h1_alt}>Pruebita </h1>
+              <p>Pruebita</p>
+              <p>Pruebita</p>
             </div>
           </div>
         </div>

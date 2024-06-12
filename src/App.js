@@ -17,7 +17,9 @@ import MainLayout from "./components/MainLayout";
 // import Sellerlist from "./pages/Sellerlist";
 // import Addsize from "./pages/Addsize";
 // import Sizelist from "./pages/Sizelist";
+import AgregarEmpleado from "./pages/AgregarEmpleado";
 import Productlist from "./pages/Productlist";
+import DetalleProducto from "./pages/DetalleProducto";
 // import Addproduct from "./pages/Addproduct";
 // import Viewproduct from "./pages/Viewproduct";
 // import ViewproductCliente from "./pages/ViewproductCliente";
@@ -26,7 +28,8 @@ import Productlist from "./pages/Productlist";
  import Marcaautolist from "./pages/Marcaautolist";
  import Serviciosmantreplist from "./pages/Serviciosmantreplist";
  import Agregarproducto from "./pages/Agregarproducto";
-// import AssociatedProducts from "./pages/AssociatedProducts";
+ import AgregarProveedor from "./pages/AgregarProveedor";
+ // import AssociatedProducts from "./pages/AssociatedProducts";
  import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
 // import Womenproduct from "./pages/Womenproduct";
 // import Manproduct from "./pages/Manproduct";
@@ -94,7 +97,13 @@ function App() {
               <Route path="lista-marcas-de-autos" element={<Marcaautolist />} />
               <Route path="lista-servicios-mantenimiento-y-reparacion" element={<Serviciosmantreplist />} />
               <Route path="producto" element={<Agregarproducto />} />
+              <Route path="producto/:id" element={<Agregarproducto />} />     
+              <Route path="ver-producto/:id" element={<DetalleProducto />} />     
               <Route path="lista-productos" element={<Productlist />} />
+
+              <Route path="vendedor" element={<AgregarEmpleado />} />
+              <Route path="proveedor" element={<AgregarProveedor />} />
+              <Route path="proveedor/:id" element={<AgregarProveedor />} />     
             </Route>
             {/* cierreadmin */}
           </Routes>

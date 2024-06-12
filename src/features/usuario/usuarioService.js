@@ -9,12 +9,22 @@ const getUsers = async () => {
   return response.data;
 };
 
-const createSeller = async (user) => {
+const createProveedor = async (user) => {
   //listo
-  const response = await axios.post(`${base_url}persona/crear-vendedor`, user, config);
-
+  console.log("Datos enviados al backend:", user); // Verificar los datos enviados
+  const response = await axios.post(`${base_url}persona/proveedor`, user, config);
+  console.log("Datos enviados al backend si:", user); // Verificar los datos enviados
   return response.data;
 };
+
+const createEmpleado = async (user) => {
+  //listo
+  console.log("Datos enviados al backend:", user); // Verificar los datos enviados
+  const response = await axios.post(`${base_url}persona/empleado`, user, config);
+  console.log("Datos enviados al backend si:", user); // Verificar los datos enviados
+  return response.data;
+};
+
 
 const createUser = async (user) => {
   //listo
@@ -41,10 +51,9 @@ const confirm = async (token) => {
   return response.data;
 };
 
-const getUser = async (correo) => {
+const getUser = async (id) => {
   try {
-    const response = await axios.get(`${base_url}persona/correo/${correo}`, config);
-    console.log(response.data);
+    const response = await axios.get(`${base_url}persona/${id}`, config);
     return response.data;
   } catch (error) {
     console.error("Error al obtener el usuario:", error);
@@ -90,10 +99,13 @@ const updateUser = async (user) => {//listo
   const response = await axios.put(
     `${base_url}persona/${user.id}`,
     {
+
       nombre: user.userData.nombre,
       correo: user.userData.correo,
       contrasenia: user.userData.contrasenia,
-      rol: user.userData.rol,
+      //rol: user.userData.rol,
+      ubicacion: user.userData.ubicacion,
+      telefono: user.userData.telefono,
       code: user.userData.code,
       estado: user.userData.estado,
     },
@@ -138,7 +150,8 @@ const userService = {
   resetPassword,
   getCustomer,
   updateSellerByEmail,
-  createSeller,
+  createProveedor,
+  createEmpleado,
   logoutUser,
   updateUserByEmail,
   createUser,

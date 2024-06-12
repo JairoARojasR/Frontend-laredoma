@@ -118,11 +118,13 @@ const Agregarproducto = () => {
   const catState = useSelector((state) => state.categoria.categorias);
   const imgState = useSelector((state) => state.upload.images);
 
+  
   useEffect(() => {
     dispatch(getMarcasauto());
     dispatch(getCategorias());
-    dispatch(getUsers());
+   dispatch(getUsers());
   }, [dispatch]);
+
 
   const newProduct = useSelector((state) => state.producto);
   const {
@@ -152,6 +154,13 @@ const Agregarproducto = () => {
       dispatch(resetState());
     }
   }, [getProdId]);
+  
+
+  useEffect(() => {
+    if (productImg && productImg.length > 0) {
+      setImagenes(productImg);
+    }
+  }, [productImg]);
 
   useEffect(() => {
     if (isSuccess && createdProduct && !isExisting) {
@@ -199,10 +208,6 @@ const Agregarproducto = () => {
     validationSchema: schema,
     onSubmit: (values) => {
       if (getProdId !== undefined) {
-        if (!showDiscountFields) {
-          values.descuento = "";
-          values.precioConDescuento = "";
-        }
         const data = { id: getProdId, productData: values };
         dispatch(updateAProduct(data));
         dispatch(resetState());
@@ -476,11 +481,21 @@ const Agregarproducto = () => {
                     0
                 }
               >
-                {userState.map((i, j) => (
-                  <Option key={j} value={i._id} disabled={!i.activo}>
-                    {i.nombre}
-                  </Option>
-                ))}
+                {userState.map((user) => {
+                  if (user.id_rol === "6667c97dbb2265c8a8eba941") {
+                    return (
+                      <Option
+                        key={user._id}
+                        value={user._id}
+                        disabled={!user.activo}
+                      >
+                        {user.nombre}
+                      </Option>
+                    );
+                  } else {
+                    return null; 
+                  }
+                })}
               </Select>
               <div className="error">
                 {formik.touched.proveedores && formik.errors.proveedores}
@@ -502,8 +517,8 @@ const Agregarproducto = () => {
               </Popover>
 
               <Select
-                 mode="multiple"
-                 placeholder="Seleccione una marca de auto"
+                mode="multiple"
+                placeholder="Seleccione una marca de auto"
                 showSearch
                 value={formik.values.marca_auto}
                 onChange={(value) => {
@@ -567,8 +582,7 @@ const Agregarproducto = () => {
                     onClick={() => handleRemoveImage(imageIndex)}
                     className="btn_delete position-absolute"
                   >
-                    {" "}
-                    <IoCloseOutline />{" "}
+                    <IoCloseOutline />
                   </button>
                 )}
                 <img
@@ -580,43 +594,41 @@ const Agregarproducto = () => {
               </div>
             ))}
             <div>
-              <div>
-                <Dropzone
-                  onDrop={(acceptedFiles) => {
-                    setIsUploading(true);
-                    handleImageChange(acceptedFiles).finally(() =>
-                      setIsUploading(false)
-                    );
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <section>
-                      <div
-                        className="dropzone"
-                        {...getRootProps()}
-                        style={{
-                          marginBottom: "10px",
-                          display: "flex",
-                          flexDirection: "colums",
-                        }}
-                      >
-                        <input {...getInputProps()} />
-                        {isUploading ? (
-                          <div style={{ position: "relative" }}>
-                            <Spin tip="Cargando..." size="large">
-                              <div
-                                style={{ height: "50px", width: "55px" }}
-                              ></div>
-                            </Spin>
-                          </div>
-                        ) : (
-                          <p>Agregar +</p>
-                        )}
-                      </div>
-                    </section>
-                  )}
-                </Dropzone>
-              </div>
+              <Dropzone
+                onDrop={(acceptedFiles) => {
+                  setIsUploading(true);
+                  handleImageChange(acceptedFiles).finally(() =>
+                    setIsUploading(false)
+                  );
+                }}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <div
+                      className="dropzone"
+                      {...getRootProps()}
+                      style={{
+                        marginBottom: "10px",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <input {...getInputProps()} />
+                      {isUploading ? (
+                        <div style={{ position: "relative" }}>
+                          <Spin tip="Cargando..." size="large">
+                            <div
+                              style={{ height: "50px", width: "55px" }}
+                            ></div>
+                          </Spin>
+                        </div>
+                      ) : (
+                        <p>Agregar +</p>
+                      )}
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
             </div>
           </div>
           <button
