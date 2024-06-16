@@ -87,7 +87,7 @@ const loginUser = async (loginData) => {
 };
 
 const logoutUser = async () => {
-  const response = await axios.get(`${base_url}persona/logout`);
+  const response = await axios.post(`${base_url}persona/logout`);
   localStorage.removeItem("user");
   console.log("localstorage",localStorage);
   config.headers.Authorization="";

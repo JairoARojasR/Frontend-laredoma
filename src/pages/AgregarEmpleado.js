@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Button, Form, Input, DatePicker, Typography, message, Select} from "antd";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import "../styles/custom.css"
 import {
   createProveedor,
   createEmpleado,

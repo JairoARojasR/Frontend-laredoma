@@ -29,6 +29,8 @@ import DetalleProducto from "./pages/DetalleProducto";
  import Serviciosmantreplist from "./pages/Serviciosmantreplist";
  import Agregarproducto from "./pages/Agregarproducto";
  import AgregarProveedor from "./pages/AgregarProveedor";
+ import CrearVenta from "./pages/CrearVenta";
+ import AgregarVenta from "./pages/AgregarVenta";
  // import AssociatedProducts from "./pages/AssociatedProducts";
  import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
 // import Womenproduct from "./pages/Womenproduct";
@@ -100,10 +102,13 @@ function App() {
               <Route path="producto/:id" element={<Agregarproducto />} />     
               <Route path="ver-producto/:id" element={<DetalleProducto />} />     
               <Route path="lista-productos" element={<Productlist />} />
-
               <Route path="vendedor" element={<AgregarEmpleado />} />
               <Route path="proveedor" element={<AgregarProveedor />} />
               <Route path="proveedor/:id" element={<AgregarProveedor />} />     
+              <Route path="venta" element={<CrearVenta />} />    
+              <Route path="venta-lista" element={<AgregarVenta />} />    
+
+
             </Route>
             {/* cierreadmin */}
           </Routes>

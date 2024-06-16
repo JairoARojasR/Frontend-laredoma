@@ -7,13 +7,14 @@ import uploadReducer from "../features/upload/uploadSlice";
 import userReducer from "../features/usuario/usuarioSlice"
 import marcaautoReducer from "../features/marca_auto/marcaautoSlice"
 import serviciosmantrepReducer from "../features/serviciosmantrep/serviciosmantrepSlice"
+import ventaReducer from "../features/venta/ventaSlice" 
 export const reduxConfig = configureStore({
   reducer: { 
     categoria: categoriaReducer,
     marcaauto: marcaautoReducer,
     serviciosmantrep: serviciosmantrepReducer,
     producto: productoReducer,
-
+    venta: ventaReducer,
     //producto: productoReducer,
     // size: tallaReducer,
     // color: colorReducer,

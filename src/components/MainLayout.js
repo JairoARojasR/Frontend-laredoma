@@ -207,6 +207,25 @@ const MainLayout = () => {
                 },
               ],
             },
+
+            {
+              key: "venta",
+              icon: <GiMechanicGarage className="fs-4" />,
+              label: "Ventas",
+              children: [
+                {
+                  key: "venta",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Agregar Ventas",
+                },
+
+                {
+                  key: "venta-lista",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Lista de Ventas",
+                }
+              ]
+            },
           ]}
         />
       </Sider>
