@@ -214,7 +214,7 @@ const MainLayout = () => {
               label: "Ventas",
               children: [
                 {
-                  key: "venta",
+                  key: "ventas",
                   icon: <FaUsers className="fs-4" />,
                   label: "Agregar Ventas",
                 },
@@ -223,6 +223,11 @@ const MainLayout = () => {
                   key: "venta-lista",
                   icon: <FaUsers className="fs-4" />,
                   label: "Lista de Ventas",
+                },
+                {
+                  key: "lista-venta",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Lista de Ventas original",
                 }
               ]
             },

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Select, Input, Button, Table } from "antd";
+import { Select, Input, Button, Table, Modal, Form } from "antd";
 import CustomInput from "../components/CustomInput";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getMarcasauto } from "../features/marca_auto/marcaautoSlice";
-import { getUsers } from "../features/usuario/usuarioSlice";
+import { getUsers, createUser } from "../features/usuario/usuarioSlice";
 import { getCategorias } from "../features/categoria/categoriaSlice";
 import productService from "../features/producto/productoService";
 import "../styles/Addproducts.css";
@@ -29,7 +29,6 @@ const { Option } = Select;
 // Esquema de validación Yup para el formulario de venta
 const schema = yup.object().shape({
   id_cajera: yup.string().required("Cajera es requerida"),
-  id_cliente: yup.string().required("Cliente es requerido"),
   total_venta: yup
     .number()
     .min(1, "El total de la venta debe ser mayor que cero")
@@ -72,14 +71,25 @@ const AgregarVenta = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const getVentaId = location.pathname.split("/")[3];
-
   const userState = useSelector((state) => state.user.users);
   const catState = useSelector((state) => state.categoria.categorias);
   const productoState = useSelector((state) => state.producto.products);
   const servicioState = useSelector(
     (state) => state.serviciosmantrep.servicios
   );
+  const [nombreProducto, setNombreProducto] = useState("");
+  const [precioProducto, setPrecioProducto] = useState(0);
+  const [cantidadProducto, setCantidadProducto] = useState(1);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing2, setIsEditing2] = useState(false);
+  const [editingProductId, setEditingProductId] = useState(null);
+  const [editingServicioId, seteditingServicioId] = useState(null);
+  const [editingMecanicoId, seteditingMecanicoId] = useState(null);
+  const [nombreServicio, setNombreServicio] = useState("");
+  const [mecanico, setMecanico] = useState("");
+  const [precioManoDeObra, setPrecioManoDeObra] = useState(0);
+  const [showAddClientModal, setShowAddClientModal] = useState(false); // Estado para controlar la visibilidad del modal de agregar cliente
+  const [placaCarro, setPlacaCarro] = useState("");
 
   useEffect(() => {
     dispatch(getCategorias());
@@ -91,13 +101,9 @@ const AgregarVenta = () => {
   const newventa = useSelector((state) => state.venta);
   const { isSuccess, isError, isLoading, isExisting, createdVenta } = newventa;
 
-  useEffect(() => {
-    if (getVentaId !== undefined) {
-      dispatch(getAProduct(getVentaId));
-    } else {
-      dispatch(resetState());
-    }
-  }, [getVentaId]);
+  const handleAgregarVenta = () => {
+    formik.handleSubmit();
+  };
 
   useEffect(() => {
     if (isSuccess && createdVenta && !isExisting) {
@@ -118,14 +124,17 @@ const AgregarVenta = () => {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      id_cajera: "", // ID de la cajera seleccionada
-      id_cliente: "", // ID del cliente seleccionado
-      total_venta: 0, // Total de la venta
-      metodo_pago: "", // Método de pago seleccionado
-      productos_vendidos: [], // Array de productos vendidos
-      servicios_prestados: [], // Array de servicios prestados
+      id_cajera: "",
+      id_cliente: "",
+      nombre_cliente: "",
+      cedula_cliente: 0,
+      correo_cliente: "",
+      telefono_cliente: 0,
+      total_venta: 0,
+      metodo_pago: "",
+      productos_vendidos: [],
+      servicios_prestados: [],
     },
-
     validationSchema: schema,
     onSubmit: (values) => {
       dispatch(createVenta(values));
@@ -139,16 +148,27 @@ const AgregarVenta = () => {
     },
   });
 
-  const [nombreProducto, setNombreProducto] = useState("");
-  const [precioProducto, setPrecioProducto] = useState(0);
-  const [cantidadProducto, setCantidadProducto] = useState(1);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingProductId, setEditingProductId] = useState(null);
-  const [editingServicioId, seteditingServicioId] = useState(null);
-  const [editingMecanicoId, seteditingMecanicoId] = useState(null);
-  const [nombreServicio, setNombreServicio] = useState("");
-  const [precioManoDeObra, setPrecioManoDeObra] = useState(0);
-  const [placaCarro, setPlacaCarro] = useState(0);
+  const calcularTotalVenta = () => {
+    let totalProductos = 0;
+    let totalServicios = 0;
+
+    formik.values.productos_vendidos.forEach((producto) => {
+      totalProductos += producto.precio * producto.cantidad;
+    });
+
+    formik.values.servicios_prestados.forEach((servicio) => {
+      totalServicios += servicio.precio_manoDeObra;
+    });
+
+    const totalVenta = totalProductos + totalServicios;
+    formik.setFieldValue("total_venta", totalVenta);
+
+    return totalVenta;
+  };
+
+  useEffect(() => {
+    calcularTotalVenta();
+  }, [formik.values.productos_vendidos, formik.values.servicios_prestados]);
 
   const handleAgregarProducto = () => {
     if (nombreProducto && precioProducto > 0 && cantidadProducto > 0) {
@@ -158,7 +178,7 @@ const AgregarVenta = () => {
 
       if (productoEncontrado) {
         const producto = {
-          id_producto: isEditing ? editingProductId : `${Date.now()}`,
+          id_producto: isEditing ? editingProductId : productoEncontrado._id,
           nombre: productoEncontrado.nombre,
           cantidad: cantidadProducto,
           precio: precioProducto,
@@ -166,8 +186,7 @@ const AgregarVenta = () => {
 
         if (isEditing) {
           const updatedProductos = formik.values.productos_vendidos.map(
-            (prod) =>
-              prod.id_producto === editingProductId ? producto : prod
+            (prod) => (prod.id_producto === editingProductId ? producto : prod)
           );
           formik.setFieldValue("productos_vendidos", updatedProductos);
           setIsEditing(false);
@@ -179,6 +198,7 @@ const AgregarVenta = () => {
           ]);
         }
 
+        // Limpiar campos después de agregar
         setNombreProducto("");
         setPrecioProducto(0);
         setCantidadProducto(1);
@@ -194,33 +214,35 @@ const AgregarVenta = () => {
         (ser) => ser._id === nombreServicio
       );
       const mecanicoEncontrado = userState.find(
-        (user) => user._id === formik.values.id_mecanico
+        (user) => user._id === mecanico
       );
-  
+      console.log("user ", userState);
       if (servicioEncontrado && mecanicoEncontrado) {
         const servicio = {
-          id_servicio: isEditing ? editingServicioId : servicioEncontrado._id,
-          id_mecanico: isEditing ? editingMecanicoId : formik.values.id_mecanico,
+          id_servicio: isEditing2 ? editingServicioId : servicioEncontrado._id,
+          id_mecanico: isEditing2 ? editingMecanicoId : mecanico,
           placaCarro: placaCarro,
           precio_manoDeObra: precioManoDeObra,
         };
-  
-        if (isEditing) {
+
+        if (isEditing2) {
           const updatedServicios = formik.values.servicios_prestados.map(
             (ser) => (ser.id_servicio === editingServicioId ? servicio : ser)
           );
           formik.setFieldValue("servicios_prestados", updatedServicios);
-          setIsEditing(false);
-          setEditingProductId(null);
+          setIsEditing2(false);
+          //setEditingServicioId(null);
         } else {
           formik.setFieldValue("servicios_prestados", [
             ...formik.values.servicios_prestados,
             servicio,
           ]);
         }
-  
-        setPlacaCarro(0);
+
+        // Limpiar campos después de agregar
+        setNombreServicio("");
         setPrecioManoDeObra(0);
+        setPlacaCarro("");
       } else {
         toast.error("Servicio o mecánico no encontrado");
       }
@@ -228,10 +250,9 @@ const AgregarVenta = () => {
       toast.error("Por favor ingrese la placa del carro");
     }
   };
-  
 
   const handleEditarProducto = (producto) => {
-    setNombreProducto(producto.nombre);
+    setNombreProducto(producto.id_producto);
     setPrecioProducto(producto.precio);
     setCantidadProducto(producto.cantidad);
     setIsEditing(true);
@@ -245,14 +266,58 @@ const AgregarVenta = () => {
     formik.setFieldValue("productos_vendidos", updatedProductos);
   };
 
+  const handleEditarServicio = (servicio) => {
+    console.log("servicio", servicio);
+    setNombreServicio(servicio.id_servicio);
+    setPlacaCarro(servicio.placaCarro);
+    setPrecioManoDeObra(servicio.precio_manoDeObra);
+    setIsEditing2(true);
+    seteditingServicioId(servicio.id_servicio);
+    seteditingMecanicoId(servicio.id_mecanico);
+  };
+
+  const handleEliminarServicio = (id_servicio) => {
+    const updatedProductos = formik.values.servicios_prestados.filter(
+      (servicio) => servicio.id_servicio !== id_servicio
+    );
+    formik.setFieldValue("productos_vendidos", updatedProductos);
+  };
+
   const handlePlacaCarroChange = (e) => {
     setPlacaCarro(e.target.value);
   };
 
+  const handleMecanicoChange = (e) => {
+    setMecanico(e.target.value);
+  };
+
+  const handleCrearCliente = () => {
+    const nuevoCliente = {
+      cedula: formik.values.cedula_cliente,
+      correo: formik.values.correo_cliente,
+      nombre: formik.values.nombre_cliente, 
+      telefono: formik.values.telefono_cliente,
+      id_rol: "666e14291f37b8e8b13ad363",
+    };
+
+    dispatch(createUser(nuevoCliente)).then((response) => {
+      const clienteCreado = response.data; // Obtener el cliente creado de la respuesta
+      dispatch(getUsers());
+      formik.setFieldValue("cedula_cliente", clienteCreado.cedula);  
+      formik.setFieldValue("nombre_cliente", clienteCreado.nombre);
+      formik.setFieldValue("correo_cliente", clienteCreado.correo);
+      formik.setFieldValue("telefono_cliente", clienteCreado.telefono);
+      setShowAddClientModal(false);
+    }).catch(error => {
+      console.error("Error al crear el cliente:", error);
+    });
+  };
+
+
   return (
     <div className="formulario_productos">
       <h3 className="mb-4 title">
-        {getVentaId !== undefined ? "Editar" : "Agregar"} Venta
+        Agregar Venta
         {console.log("formik", formik.values)}
       </h3>
 
@@ -293,13 +358,36 @@ const AgregarVenta = () => {
                 <div className="error_message">{formik.errors.id_cajera}</div>
               )}
 
-              <label>Cliente</label>
+              <label>Buscar Cliente</label>
               <Select
                 showSearch
                 placeholder="Selecciona un cliente"
                 optionFilterProp="children"
                 value={formik.values.id_cliente}
-                onChange={(value) => formik.setFieldValue("id_cliente", value)}
+                onChange={(value) => {
+                  formik.setFieldValue("id_cliente", value);
+                  const clienteSeleccionado = userState.find(
+                    (user) => user._id === value
+                  );
+                  if (clienteSeleccionado) {
+                    formik.setFieldValue(
+                      "nombre_cliente",
+                      clienteSeleccionado.nombre
+                    );
+                    formik.setFieldValue(
+                      "correo_cliente",
+                      clienteSeleccionado.correo
+                    );
+                    formik.setFieldValue(
+                      "telefono_cliente",
+                      clienteSeleccionado.telefono
+                    );
+                    formik.setFieldValue(
+                      "cedula_cliente",
+                      clienteSeleccionado.cedula
+                    );
+                  }
+                }}
                 onBlur={formik.handleBlur("id_cliente")}
                 style={{ width: "100%" }}
               >
@@ -311,7 +399,7 @@ const AgregarVenta = () => {
                         value={user._id}
                         disabled={!user.activo}
                       >
-                        {user.nombre}
+                        {`${user.cedula}`}{" "}
                       </Option>
                     );
                   } else {
@@ -319,9 +407,143 @@ const AgregarVenta = () => {
                   }
                 })}
               </Select>
+
               {formik.touched.id_cliente && formik.errors.id_cliente && (
                 <div className="error_message">{formik.errors.id_cliente}</div>
               )}
+
+              {/* Botón para agregar nuevo cliente */}
+              <Button onClick={() => setShowAddClientModal(true)}>
+                Agregar Cliente
+              </Button>
+
+              {/* Modal para agregar cliente */}
+              <Modal
+                title="Agregar Cliente"
+                visible={showAddClientModal}
+                onCancel={() => setShowAddClientModal(false)}
+                footer={[
+                  <Button
+                    key="cancel"
+                    onClick={() => setShowAddClientModal(false)}
+                  >
+                    Cancelar
+                  </Button>,
+                  <Button
+                    key="submit"
+                    type="primary"
+                    onClick={handleCrearCliente}
+                  >
+                    Guardar
+                  </Button>,
+                ]}
+              >
+                <Form layout="vertical">
+                  <Form.Item
+                    label="Cédula"
+                    name="cedula_cliente"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Por favor ingrese la cédula del cliente",
+                      },
+                    ]}
+                  >
+                    <Input
+                      value={formik.values.cedula_cliente}
+                      onChange={formik.handleChange}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Nombre"
+                    name="nombre_cliente"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Por favor ingrese el nombre del cliente",
+                      },
+                    ]}
+                  >
+                    <Input
+                      value={formik.values.nombre_cliente}
+                      onChange={formik.handleChange}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Correo"
+                    name="correo_cliente"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Por favor ingrese el correo del cliente",
+                      },
+                    ]}
+                  >
+                    <Input
+                      value={formik.values.correo_cliente}
+                      onChange={formik.handleChange}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Teléfono"
+                    name="telefono_cliente"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Por favor ingrese el teléfono del cliente",
+                      },
+                    ]}
+                  >
+                    <Input
+                      value={formik.values.telefono_cliente}
+                      onChange={formik.handleChange}
+                    />
+                  </Form.Item>
+                </Form>
+              </Modal>
+
+
+              <label>Cedula del Cliente</label>
+              <CustomInput
+                type="text"
+                val={formik.values.cedula_cliente}
+                onChng={(e) =>
+                  formik.setFieldValue("cedula_cliente", e.target.value)
+                }
+                onBlr={formik.handleBlur("cedula_cliente")}
+              />
+
+              <label>Nombre del Cliente</label>
+              <CustomInput
+                type="text"
+                val={formik.values.nombre_cliente}
+                onChng={(e) =>
+                  formik.setFieldValue("nombre_cliente", e.target.value)
+                }
+                onBlr={formik.handleBlur("nombre_cliente")}
+              />
+
+              <label>Correo del Cliente</label>
+              <CustomInput
+                type="text"
+                val={formik.values.correo_cliente}
+                onChng={(e) =>
+                  formik.setFieldValue("correo_cliente", e.target.value)
+                }
+                onBlr={formik.handleBlur("correo_cliente")}
+              />
+
+              <label>Número de telefono del Cliente</label>
+              <CustomInput
+                type="number"
+                val={formik.values.telefono_cliente}
+                onChng={(e) =>
+                  formik.setFieldValue("telefono_cliente", e.target.value)
+                }
+                onBlr={formik.handleBlur("telefono_cliente")}
+              />
 
               <label>Total Venta</label>
               <Input
@@ -330,6 +552,7 @@ const AgregarVenta = () => {
                 onChange={formik.handleChange("total_venta")}
                 onBlur={formik.handleBlur("total_venta")}
                 value={formik.values.total_venta}
+                disabled={true}
               />
               {formik.touched.total_venta && formik.errors.total_venta && (
                 <div className="error_message">{formik.errors.total_venta}</div>
@@ -352,7 +575,7 @@ const AgregarVenta = () => {
               )}
             </div>
           </section>
-
+          {console.log("AAAAAAAAAAAAAAAAAAa", nombreServicio)}
           <section className="form_section">
             <div className="form_data">
               <h4>Productos Vendidos</h4>
@@ -471,12 +694,6 @@ const AgregarVenta = () => {
                 value={nombreServicio}
                 onChange={(value) => {
                   setNombreServicio(value);
-                  const servicio = servicioState.find(
-                    (ser) => ser._id === value
-                  );
-                  if (servicio) {
-                    setPrecioManoDeObra(servicio.precio);
-                  }
                 }}
                 style={{ width: "100%" }}
               >
@@ -492,9 +709,10 @@ const AgregarVenta = () => {
                 showSearch
                 placeholder="Selecciona un Mecanico"
                 optionFilterProp="children"
-                value={formik.values.id_mecanico}
-                onChange={(value) => formik.setFieldValue("id_mecanico", value)}
-                onBlur={formik.handleBlur("id_mecanico")}
+                value={mecanico}
+                onChange={(value) => {
+                  setMecanico(value);
+                }}
                 style={{ width: "100%" }}
               >
                 {userState.map((user) => {
@@ -518,11 +736,12 @@ const AgregarVenta = () => {
               )}
 
               <label>Placa Carro</label>
-              <Input
-                type="number"
-                value={placaCarro}
-                onChange={(e) => setPlacaCarro(Number(e.target.value))}
-                min="1"
+              <CustomInput
+                type="text"
+                val={placaCarro}
+                onChng={handlePlacaCarroChange}
+                onBlr={formik.handleBlur("placaCarro")}
+                //val={formik.values.placaCarro}
               />
 
               <label>Precio Mano de Obra</label>
@@ -533,7 +752,6 @@ const AgregarVenta = () => {
                 min="1"
               />
 
-
               <Button
                 type="primary"
                 onClick={handleAgregarServicio}
@@ -543,17 +761,37 @@ const AgregarVenta = () => {
               </Button>
 
               <Table
-                dataSource={formik.values.servicios_prestados }
+                dataSource={formik.values.servicios_prestados}
                 columns={[
                   {
                     title: "Nombre del servicio",
                     dataIndex: "id_servicio",
                     key: "id_servicio",
                     render: (id_servicio) => {
-                        const servicio = servicioState.find(ser => ser._id === id_servicio);
-                        return servicio ? servicio.nombre : 'Servicio no encontrado';
-                      },
+                      const servicio = servicioState.find(
+                        (ser) => ser._id === id_servicio
+                      );
+                      return servicio
+                        ? servicio.nombre
+                        : "Servicio no encontrado";
+                    },
                   },
+
+                  {
+                    title: "Nombre del Mecanico",
+                    dataIndex: "id_mecanico",
+                    key: "id_mecanico",
+                    render: (id_mecanico) => {
+                      const usuario = userState.find(
+                        (u) => u._id === id_mecanico
+                      );
+                      console.log("mecanicooo ", id_mecanico);
+                      return usuario
+                        ? usuario.nombre
+                        : "Mecanico no encontrado";
+                    },
+                  },
+
                   {
                     title: "Placa Carro",
                     dataIndex: "placaCarro",
@@ -578,7 +816,7 @@ const AgregarVenta = () => {
                       <div>
                         <Button
                           type="link"
-                          onClick={() => handleEditarProducto(record)}
+                          onClick={() => handleEditarServicio(record)}
                         >
                           Editar
                         </Button>
@@ -586,7 +824,7 @@ const AgregarVenta = () => {
                           type="link"
                           danger
                           onClick={() =>
-                            handleEliminarProducto(record.id_producto)
+                            handleEliminarServicio(record.id_servicio)
                           }
                         >
                           Eliminar
@@ -595,7 +833,7 @@ const AgregarVenta = () => {
                     ),
                   },
                 ]}
-                rowKey="id_producto"
+                rowKey="id_servicio"
                 style={{ marginTop: "20px" }}
               />
             </div>
@@ -603,9 +841,10 @@ const AgregarVenta = () => {
 
           <Button
             className="btn btn-success border-0 rounded-3 my-5"
-            type="submit"
+            type="button"
+            onClick={handleAgregarVenta}
           >
-            {getVentaId !== undefined ? "Editar" : "Agregar"} Venta
+            AgregarVenta
           </Button>
         </form>
       </div>

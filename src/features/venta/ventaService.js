@@ -18,7 +18,9 @@ const getVentas = async () => {
   };
 
   const createVenta = async (venta) => {
-    const response = await axios.post(`${base_url}venta/`, venta, config);
+    console.log("LLEGAAAAAAAAAAAAAAAAAAAAAA");
+    const response = await axios.post(`${base_url}venta/crearVenta`, venta, config);
+    console.log("LLEGAAAAAAAAAAAAAAAAAAAAAA");
     return response.data;
   };
 

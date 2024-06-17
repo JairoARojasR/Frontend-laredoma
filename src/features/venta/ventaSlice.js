@@ -77,7 +77,6 @@ export const getVentas = createAsyncThunk(
             state.isLoading = false;
             state.isError = false;
             state.isSuccess = true;
-            state.categoriaNombre = action.payload.nombre;
           })
           .addCase(getVenta.rejected, (state, action) => {
             state.isLoading = false;

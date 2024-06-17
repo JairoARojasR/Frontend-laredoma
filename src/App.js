@@ -31,6 +31,7 @@ import DetalleProducto from "./pages/DetalleProducto";
  import AgregarProveedor from "./pages/AgregarProveedor";
  import CrearVenta from "./pages/CrearVenta";
  import AgregarVenta from "./pages/AgregarVenta";
+ import VentaList from "./pages/Ventalist";
  // import AssociatedProducts from "./pages/AssociatedProducts";
  import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
 // import Womenproduct from "./pages/Womenproduct";
@@ -105,8 +106,10 @@ function App() {
               <Route path="vendedor" element={<AgregarEmpleado />} />
               <Route path="proveedor" element={<AgregarProveedor />} />
               <Route path="proveedor/:id" element={<AgregarProveedor />} />     
-              <Route path="venta" element={<CrearVenta />} />    
+              <Route path="ventas" element={<CrearVenta />} />    
               <Route path="venta-lista" element={<AgregarVenta />} />    
+              <Route path="lista-venta" element={<VentaList />} />    
+
 
 
             </Route>
