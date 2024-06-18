@@ -3,13 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { Select, Input, Button, Table, Modal, Form } from "antd";
 import CustomInput from "../components/CustomInput";
 import { toast } from "react-toastify";
+import { base_url } from "../utils/baseUrl";
+import axios from "axios";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getMarcasauto } from "../features/marca_auto/marcaautoSlice";
-import { getUsers, createUser } from "../features/usuario/usuarioSlice";
+import { getUsers, createUser, createdUser } from "../features/usuario/usuarioSlice";
 import { getCategorias } from "../features/categoria/categoriaSlice";
-import productService from "../features/producto/productoService";
+import userService from "../features/usuario/usuarioService";
 import "../styles/Addproducts.css";
 import {
   createProducts,
@@ -104,6 +106,11 @@ const AgregarVenta = () => {
   const handleAgregarVenta = () => {
     formik.handleSubmit();
   };
+
+  const newUser = useSelector((state) => state.user);
+  const {
+    createdUser
+  } = newUser;
 
   useEffect(() => {
     if (isSuccess && createdVenta && !isExisting) {
@@ -291,7 +298,7 @@ const AgregarVenta = () => {
     setMecanico(e.target.value);
   };
 
-  const handleCrearCliente = () => {
+  const handleCrearCliente = async () => {
     const nuevoCliente = {
       cedula: formik.values.cedula_cliente,
       correo: formik.values.correo_cliente,
@@ -300,17 +307,15 @@ const AgregarVenta = () => {
       id_rol: "666e14291f37b8e8b13ad363",
     };
 
-    dispatch(createUser(nuevoCliente)).then((response) => {
-      const clienteCreado = response.data; // Obtener el cliente creado de la respuesta
-      dispatch(getUsers());
+    const response = await axios.post(`${base_url}persona/`, nuevoCliente);
+      const clienteCreado = response; // Obtener el cliente creado de la respuesta
       formik.setFieldValue("cedula_cliente", clienteCreado.cedula);  
       formik.setFieldValue("nombre_cliente", clienteCreado.nombre);
       formik.setFieldValue("correo_cliente", clienteCreado.correo);
       formik.setFieldValue("telefono_cliente", clienteCreado.telefono);
       setShowAddClientModal(false);
-    }).catch(error => {
-      console.error("Error al crear el cliente:", error);
-    });
+    
+    dispatch(getUsers());
   };
 
 
