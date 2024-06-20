@@ -223,37 +223,38 @@ const Agregarproducto = () => {
     },
   });
 
-  const handleImageChange = async (files) => {
+ const handleImageChange = async (files) => {
     setIsUploading(true);
-
+  
     try {
       const newImages = [];
-      for (const file of files) {
-        const uploadedImage = await dispatch(uploadImg([file]));
-
-        if (Array.isArray(uploadedImage.payload)) {
+      const uploadedImage = await dispatch(uploadImg(files));
+  
+      if (Array.isArray(uploadedImage.payload)) {
+        uploadedImage.payload.forEach((image) => {
           const imageInfo = {
-            public_id: uploadedImage.payload[0].public_id,
-            url: uploadedImage.payload[0].url,
+            public_id: image.public_id,
+            url: image.url,
           };
           newImages.push(imageInfo);
-        } else {
-          console.error("Uploaded image is not an array:", uploadedImage);
-        }
+        });
+  
+        // Agregar las nuevas imágenes al estado existente
+        setImagenes((prevImages) => {
+          const updatedImages = [...prevImages, ...newImages];
+          formik.setFieldValue("imagenes", updatedImages);
+          return updatedImages;
+        });
+      } else {
+        console.error("Uploaded image is not an array:", uploadedImage);
       }
-
-      // Agregar las nuevas imágenes al estado existente
-      setImagenes((prevImages) => {
-        const updatedImages = [...prevImages, ...newImages];
-        formik.setFieldValue("imagenes", updatedImages);
-        return updatedImages;
-      });
     } catch (error) {
       console.error("Error during image upload:", error);
     } finally {
       setIsUploading(false);
     }
   };
+  
 
   const handleRemoveImage = async (imageIndex) => {
     setImagenes((prevImages) => {
