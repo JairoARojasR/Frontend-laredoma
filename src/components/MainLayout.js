@@ -228,6 +228,11 @@ const MainLayout = () => {
                   key: "lista-venta",
                   icon: <FaUsers className="fs-4" />,
                   label: "Lista de Ventas original",
+                },
+                {
+                  key: "resumen",
+                  icon: <FaUsers className="fs-4" />,
+                  label: "Resumen Ventas",
                 }
               ]
             },
