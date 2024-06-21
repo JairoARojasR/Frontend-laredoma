@@ -233,7 +233,7 @@ const Agregarproducto = () => {
     },
   });
 
-  const handleImageChange = async (files) => {
+ const handleImageChange = async (files) => {
     setIsUploading(true);
   
     try {
