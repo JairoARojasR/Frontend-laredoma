@@ -102,7 +102,7 @@ export const productoSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload;
+        state.message = action.payload.response.data.message;
         state.isExisting = true; 
       })
       .addCase(updateAProduct.pending, (state) => {

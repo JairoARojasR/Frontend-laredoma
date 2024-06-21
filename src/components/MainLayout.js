@@ -114,39 +114,20 @@ const MainLayout = () => {
             },
 
             {
-              key: "mecanico",
-              icon: <GiMechanicGarage className="fs-4" />,
-              label: "Mecanicos",
-              children: [
-                {
-                  key: "mecanicos",
-                  icon: <FaUsers className="fs-4" />,
-                  label: "Agregar Mecanicos",
-                },
-
-                {
-                  key: "lista-mecanicos",
-                  icon: <FaUsers className="fs-4" />,
-                  label: "Lista de Mecanicos",
-                }
-              ]
-            },
-
-            {
-              key: "sellers",
+              key: "empleados",
               icon: <FaUser className="fs-4" />,
-              label: "Vendedores",
+              label: "Empleados",
               children: [
                 {
-                  key: "vendedor",
+                  key: "empleado",
                   icon: <FaUsers className="fs-4" />,
-                  label: "Agregar Vendedores",
+                  label: "Agregar Empleado",
                 },
 
                 {
-                  key: "lista-vendedores",
+                  key: "lista-empleados",
                   icon: <FaUsers className="fs-4" />,
-                  label: "Lista de Vendedores",
+                  label: "Lista de Empleados",
                 }
               ]
             },
@@ -218,16 +199,10 @@ const MainLayout = () => {
                   icon: <FaUsers className="fs-4" />,
                   label: "Agregar Ventas",
                 },
-
-                {
-                  key: "venta-lista",
-                  icon: <FaUsers className="fs-4" />,
-                  label: "Lista de Ventas",
-                },
                 {
                   key: "lista-venta",
                   icon: <FaUsers className="fs-4" />,
-                  label: "Lista de Ventas original",
+                  label: "Lista de Ventas",
                 },
                 {
                   key: "resumen",

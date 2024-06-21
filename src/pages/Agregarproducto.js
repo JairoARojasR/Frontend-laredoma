@@ -5,6 +5,7 @@ import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 import "react-quill/dist/quill.snow.css";
+import withBodyClass from "../components/wrapper";
 import { Select, Space, Input, Switch, Spin } from "antd"; //aqui
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
@@ -132,6 +133,7 @@ const Agregarproducto = () => {
     isError,
     isLoading,
     isExisting,
+    message,
     createdProduct,
     updatedProduct,
     productName,
@@ -172,6 +174,14 @@ const Agregarproducto = () => {
       toast.success("Producto actualizado existosamente!");
       navigate("/admin/lista-productos");
     }
+
+    if (isError && message === "ERROR PERMISOS") {
+      toast.error(
+        "Error no tienes permisos necesarios para realizar esta acción"
+      );
+      return;
+    }
+
     if (isError && !isExisting) {
       toast.error("Algo salio mal!");
     }
@@ -181,7 +191,7 @@ const Agregarproducto = () => {
         "¡El producto ya existe por favor verifica la referencia o el nombre.!"
       );
     }
-  }, [isSuccess, isError, isLoading, isExisting]);
+  }, [isSuccess, isError, isLoading, isExisting, createdProduct, updatedProduct]);
 
   const img = [];
   imgState.forEach((i) => {
@@ -225,35 +235,36 @@ const Agregarproducto = () => {
 
   const handleImageChange = async (files) => {
     setIsUploading(true);
-
+  
     try {
       const newImages = [];
-      for (const file of files) {
-        const uploadedImage = await dispatch(uploadImg([file]));
-
-        if (Array.isArray(uploadedImage.payload)) {
+      const uploadedImage = await dispatch(uploadImg(files));
+  
+      if (Array.isArray(uploadedImage.payload)) {
+        uploadedImage.payload.forEach((image) => {
           const imageInfo = {
-            public_id: uploadedImage.payload[0].public_id,
-            url: uploadedImage.payload[0].url,
+            public_id: image.public_id,
+            url: image.url,
           };
           newImages.push(imageInfo);
-        } else {
-          console.error("Uploaded image is not an array:", uploadedImage);
-        }
+        });
+  
+        // Agregar las nuevas imágenes al estado existente
+        setImagenes((prevImages) => {
+          const updatedImages = [...prevImages, ...newImages];
+          formik.setFieldValue("imagenes", updatedImages);
+          return updatedImages;
+        });
+      } else {
+        console.error("Uploaded image is not an array:", uploadedImage);
       }
-
-      // Agregar las nuevas imágenes al estado existente
-      setImagenes((prevImages) => {
-        const updatedImages = [...prevImages, ...newImages];
-        formik.setFieldValue("imagenes", updatedImages);
-        return updatedImages;
-      });
     } catch (error) {
       console.error("Error during image upload:", error);
     } finally {
       setIsUploading(false);
     }
   };
+  
 
   const handleRemoveImage = async (imageIndex) => {
     setImagenes((prevImages) => {
@@ -643,4 +654,4 @@ const Agregarproducto = () => {
   );
 };
 
-export default Agregarproducto;
+export default withBodyClass(Agregarproducto, 'body-admin');

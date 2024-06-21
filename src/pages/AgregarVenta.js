@@ -36,37 +36,34 @@ const schema = yup.object().shape({
     .min(1, "El total de la venta debe ser mayor que cero")
     .required("Total de la venta es requerido"),
   metodo_pago: yup.string().required("Método de pago es requerido"),
-  productos_vendidos: yup
-    .array()
-    .of(
-      yup.object().shape({
-        id_producto: yup.string().required("Producto es requerido"),
-        nombre: yup.string().required("Nombre es requerido"),
-        cantidad: yup
-          .number()
-          .min(1, "Cantidad debe ser mayor que cero")
-          .required("Cantidad es requerida"),
-        precio: yup
-          .number()
-          .min(1, "Precio debe ser mayor que cero")
-          .required("Precio es requerido"),
-      })
-    )
-    .min(1, "Debe seleccionar al menos un producto vendido"),
-  servicios_prestados: yup
-    .array()
-    .of(
-      yup.object().shape({
-        id_servicio: yup.string().required("Servicio es requerido"),
-        placaCarro: yup.string().required("Placa del carro es requerida"),
-        id_mecanico: yup.string().required("Mecánico es requerido"),
-        precio_manoDeObra: yup
-          .number()
-          .min(1, "Precio de mano de obra debe ser mayor que cero")
-          .required("Precio de mano de obra es requerido"),
-      })
-    )
-    .min(1, "Debe agregar al menos un servicio prestado"),
+  productos_vendidos: yup.array().of(
+    yup.object().shape({
+      id_producto: yup.string().required("Producto es requerido"),
+      nombre: yup.string().required("Nombre es requerido"),
+      cantidad: yup
+        .number()
+        .min(1, "Cantidad debe ser mayor que cero")
+        .required("Cantidad es requerida"),
+      precio: yup.number().min(1, "Precio debe ser mayor que cero").required("Precio es requerido"),
+    })
+  ),
+  servicios_prestados: yup.array().of(
+    yup.object().shape({
+      id_servicio: yup.string().required("Servicio es requerido"),
+      placaCarro: yup.string().required("Placa del carro es requerida"),
+      id_mecanico: yup.string().required("Mecánico es requerido"),
+      precio_manoDeObra: yup
+        .number()
+        .min(1, "Precio de mano de obra debe ser mayor que cero")
+        .required("Precio de mano de obra es requerido"),
+    })
+  ),
+}).test('at-least-one', 'Debe seleccionar al menos un producto vendido o un servicio prestado', function(value) {
+  const { productos_vendidos, servicios_prestados } = value;
+  if (productos_vendidos.length === 0 && servicios_prestados.length === 0) {
+    return false;
+  }
+  return true;
 });
 
 const AgregarVenta = () => {
@@ -92,6 +89,7 @@ const AgregarVenta = () => {
   const [precioManoDeObra, setPrecioManoDeObra] = useState(0);
   const [showAddClientModal, setShowAddClientModal] = useState(false); // Estado para controlar la visibilidad del modal de agregar cliente
   const [placaCarro, setPlacaCarro] = useState("");
+  const [productoYaAgregado, setProductoYaAgregado] = useState([]);
 
   useEffect(() => {
     dispatch(getCategorias());
@@ -101,7 +99,7 @@ const AgregarVenta = () => {
   }, [dispatch]);
 
   const newventa = useSelector((state) => state.venta);
-  const { isSuccess, isError, isLoading, isExisting, createdVenta } = newventa;
+  const { isSuccess, isError, isLoading, isExisting, createdVenta, message } = newventa;
 
   const handleAgregarVenta = () => {
     formik.handleSubmit();
@@ -114,19 +112,29 @@ const AgregarVenta = () => {
 
   useEffect(() => {
     if (isSuccess && createdVenta && !isExisting) {
-      toast.success("Producto agregado exitosamente!");
+      toast.success("Venta agregado exitosamente!");
       formik.resetForm();
     }
+
     if (isError && !isExisting) {
       toast.error("Algo salio mal!");
     }
 
-    if (isExisting) {
+    if (isError && message === "ERROR PERMISOS") {
       toast.error(
-        "¡El producto ya existe por favor verifica la referencia o el nombre.!"
+        "Error no tienes permisos necesarios para realizar esta acción"
       );
+            formik.resetForm();
+
+      return;
     }
-  }, [isSuccess, isError, isLoading, isExisting]);
+
+    // if (isExisting) {
+    //   toast.error(
+    //     "¡El producto ya existe por favor verifica la referencia o el nombre.!"
+    //   );
+    // }
+  }, [isSuccess, isError, isLoading, isExisting, createdVenta]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -205,6 +213,7 @@ const AgregarVenta = () => {
           ]);
         }
 
+        setProductoYaAgregado([...productoYaAgregado, productoEncontrado._id]);
         // Limpiar campos después de agregar
         setNombreProducto("");
         setPrecioProducto(0);
@@ -223,8 +232,14 @@ const AgregarVenta = () => {
       const mecanicoEncontrado = userState.find(
         (user) => user._id === mecanico
       );
-      console.log("user ", userState);
-      if (servicioEncontrado && mecanicoEncontrado) {
+      console.log("id servicio encontrado", servicioEncontrado._id," editingServicio ", editingServicioId);
+      console.log("mecanico ", mecanicoEncontrado._id, " editing ",editingMecanicoId );
+      if(isEditing2){
+        seteditingServicioId(servicioEncontrado._id);
+        seteditingMecanicoId(mecanico);
+      }
+    
+      if (servicioEncontrado && mecanico) {
         const servicio = {
           id_servicio: isEditing2 ? editingServicioId : servicioEncontrado._id,
           id_mecanico: isEditing2 ? editingMecanicoId : mecanico,
@@ -248,6 +263,7 @@ const AgregarVenta = () => {
 
         // Limpiar campos después de agregar
         setNombreServicio("");
+        setMecanico("");
         setPrecioManoDeObra(0);
         setPlacaCarro("");
       } else {
@@ -270,12 +286,19 @@ const AgregarVenta = () => {
     const updatedProductos = formik.values.productos_vendidos.filter(
       (producto) => producto.id_producto !== id_producto
     );
+    const index = productoYaAgregado.indexOf(id_producto);
+    if (index !== -1) {
+      const nuevosProductosAgregados = [...productoYaAgregado];
+      nuevosProductosAgregados.splice(index, 1);
+      setProductoYaAgregado(nuevosProductosAgregados);
+    }
     formik.setFieldValue("productos_vendidos", updatedProductos);
   };
 
   const handleEditarServicio = (servicio) => {
-    console.log("servicio", servicio);
+    console.log("AAAAAAAAAAAAAAAAAAAAYYYYYYY",servicio.nombre, );
     setNombreServicio(servicio.id_servicio);
+    setMecanico(servicio.id_mecanico);
     setPlacaCarro(servicio.placaCarro);
     setPrecioManoDeObra(servicio.precio_manoDeObra);
     setIsEditing2(true);
@@ -284,16 +307,17 @@ const AgregarVenta = () => {
   };
 
   const handleEliminarServicio = (id_servicio) => {
-    const updatedProductos = formik.values.servicios_prestados.filter(
+    const updatedServicios = formik.values.servicios_prestados.filter(
       (servicio) => servicio.id_servicio !== id_servicio
     );
-    formik.setFieldValue("productos_vendidos", updatedProductos);
+    formik.setFieldValue("servicios_prestados", updatedServicios);
   };
 
   const handlePlacaCarroChange = (e) => {
     setPlacaCarro(e.target.value);
   };
 
+  
   const handleMecanicoChange = (e) => {
     setMecanico(e.target.value);
   };
@@ -302,21 +326,41 @@ const AgregarVenta = () => {
     const nuevoCliente = {
       cedula: formik.values.cedula_cliente,
       correo: formik.values.correo_cliente,
-      nombre: formik.values.nombre_cliente, 
+      nombre: formik.values.nombre_cliente,
       telefono: formik.values.telefono_cliente,
       id_rol: "666e14291f37b8e8b13ad363",
     };
-
-    const response = await axios.post(`${base_url}persona/`, nuevoCliente);
-      const clienteCreado = response; // Obtener el cliente creado de la respuesta
+  
+    try {
+      // Antes de crear el cliente, verifica si ya existe uno con la misma cédula
+      const existeCliente = await axios.get(`${base_url}persona/cedula/${nuevoCliente.cedula}`);
+      
+      if (existeCliente.data) {
+        // Si existe un cliente con la misma cédula, muestra un mensaje o maneja el error adecuadamente
+        alert("Ya existe un cliente con esa cédula.");
+        return;
+      }
+  
+      // Si no existe, procede a crear el nuevo cliente
+      const response = await axios.post(`${base_url}persona/`, nuevoCliente);
+      const clienteCreado = response.data; // Obtener los datos del cliente creado de la respuesta
+  
+      // Actualiza los campos del formulario con los datos del cliente creado
       formik.setFieldValue("cedula_cliente", clienteCreado.cedula);  
       formik.setFieldValue("nombre_cliente", clienteCreado.nombre);
       formik.setFieldValue("correo_cliente", clienteCreado.correo);
       formik.setFieldValue("telefono_cliente", clienteCreado.telefono);
+      formik.setFieldValue("id_cliente", clienteCreado._id);
+      
       setShowAddClientModal(false);
-    
-    dispatch(getUsers());
+      dispatch(getUsers());
+    } catch (error) {
+      // Manejo de errores, como conexión fallida o errores del servidor
+      toast.error("Ya existe un cliente con esa cédula");
+      // Aquí puedes mostrar un mensaje de error o manejar la situación según tu flujo de la aplicación
+    }
   };
+  
 
 
   return (
@@ -602,10 +646,10 @@ const AgregarVenta = () => {
                 style={{ width: "100%" }}
               >
                 {productoState.map((producto) => (
-                  <Option key={producto._id} value={producto._id}>
-                    {producto.nombre}
-                  </Option>
-                ))}
+            <Option key={producto._id} value={producto._id} disabled={productoYaAgregado.includes(producto._id)}>
+              {producto.nombre}
+            </Option>
+          ))}
               </Select>
 
               <label>Cantidad</label>
@@ -709,7 +753,7 @@ const AgregarVenta = () => {
                 ))}
               </Select>
 
-              <label>Nombre del Mecanico</label>
+              <label>Nombre del Mecanico ESTE S</label>
               <Select
                 showSearch
                 placeholder="Selecciona un Mecanico"
@@ -756,13 +800,14 @@ const AgregarVenta = () => {
                 onChange={(e) => setPrecioManoDeObra(Number(e.target.value))}
                 min="1"
               />
+              
 
               <Button
                 type="primary"
                 onClick={handleAgregarServicio}
                 style={{ marginTop: "10px" }}
               >
-                {isEditing ? "Actualizar Producto" : "Agregar Producto"}
+                {isEditing2 ? "Actualizar Servicio Prestado" : "Agregar Servicio Prestado"}
               </Button>
 
               <Table
@@ -819,12 +864,7 @@ const AgregarVenta = () => {
                     key: "acciones",
                     render: (text, record) => (
                       <div>
-                        <Button
-                          type="link"
-                          onClick={() => handleEditarServicio(record)}
-                        >
-                          Editar
-                        </Button>
+                       
                         <Button
                           type="link"
                           danger
@@ -849,7 +889,7 @@ const AgregarVenta = () => {
             type="button"
             onClick={handleAgregarVenta}
           >
-            AgregarVenta
+            Agregar Venta
           </Button>
         </form>
       </div>

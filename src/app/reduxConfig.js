@@ -8,6 +8,7 @@ import userReducer from "../features/usuario/usuarioSlice"
 import marcaautoReducer from "../features/marca_auto/marcaautoSlice"
 import serviciosmantrepReducer from "../features/serviciosmantrep/serviciosmantrepSlice"
 import ventaReducer from "../features/venta/ventaSlice" 
+import permisoReducer from "../features/permisos/permisosSlice"
 export const reduxConfig = configureStore({
   reducer: { 
     categoria: categoriaReducer,
@@ -20,5 +21,6 @@ export const reduxConfig = configureStore({
     // color: colorReducer,
     upload: uploadReducer,
     user: userReducer,
+    permiso: permisoReducer,
   },
 });

@@ -9,20 +9,9 @@ import {
 import React, { createContext, useState, useEffect } from "react";
 import Login from "./pages/Login";
 import MainLayout from "./components/MainLayout";
-// import Colorlist from "./pages/Colorlist";
-// import Addcolor from "./pages/Addcolor";
-// import Categorylist from "./pages/Categorylist";
-// import Addcategory from "./pages/Addcategory";
-// import AddSeller from "./pages/AddSeller";
-// import Sellerlist from "./pages/Sellerlist";
-// import Addsize from "./pages/Addsize";
-// import Sizelist from "./pages/Sizelist";
 import AgregarEmpleado from "./pages/AgregarEmpleado";
 import Productlist from "./pages/Productlist";
 import DetalleProducto from "./pages/DetalleProducto";
-// import Addproduct from "./pages/Addproduct";
-// import Viewproduct from "./pages/Viewproduct";
-// import ViewproductCliente from "./pages/ViewproductCliente";
  import Userlist from "./pages/Userlist";
  import Categorialist from "./pages/Categorialist";
  import Marcaautolist from "./pages/Marcaautolist";
@@ -33,20 +22,13 @@ import DetalleProducto from "./pages/DetalleProducto";
  import AgregarVenta from "./pages/AgregarVenta";
  import VentaList from "./pages/Ventalist";
  import ResumenVentas from "./pages/ResumenVentas";
- // import AssociatedProducts from "./pages/AssociatedProducts";
  import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
-// import Womenproduct from "./pages/Womenproduct";
-// import Manproduct from "./pages/Manproduct";
  import LoginFormp from "./components/LoginFormp";
  import OTPInput from "./pages/OTPInput";
  import Recovered from "./pages/Recovered";
  import Reset from "./pages/Reset";
-// import Store from "./pages/Store";
-// import ViewProfile from "./pages/viewProfile";
-// import ViewProfileAdmin from "./pages/ViewProfileAdmin";
-// import ViewCustomer from "./pages/ViewCustomer";
-// import ViewSeller from "./pages/ViewSeller";
-// import Homepage from "./pages/Homepage";
+ import Empleadolist from "./pages/Empleadolist";
+
 
 export const RecoveryContext = createContext();
 
@@ -62,13 +44,9 @@ function App() {
    }
 
   useEffect(() => {
-    // Obtener el email y el OTP del localStorage al cargar la aplicación
     const storedEmail = localStorage.getItem("email");
     const storedOTP = localStorage.getItem("otp");
-
-    // Verificar si se han recuperado los valores del email y del OTP
     if (storedEmail && storedOTP) {
-      // Establecer los valores recuperados en el estado
       setEmail(storedEmail);
       setOTP(storedOTP);
     }
@@ -104,11 +82,11 @@ function App() {
               <Route path="producto/:id" element={<Agregarproducto />} />     
               <Route path="ver-producto/:id" element={<DetalleProducto />} />     
               <Route path="lista-productos" element={<Productlist />} />
-              <Route path="vendedor" element={<AgregarEmpleado />} />
+              <Route path="empleado" element={<AgregarEmpleado />} />
+              <Route path="lista-empleados" element={<Empleadolist />} />
               <Route path="proveedor" element={<AgregarProveedor />} />
               <Route path="proveedor/:id" element={<AgregarProveedor />} />     
-              <Route path="ventas" element={<CrearVenta />} />    
-              <Route path="venta-lista" element={<AgregarVenta />} />    
+              <Route path="ventas" element={<AgregarVenta />} />    
               <Route path="lista-venta" element={<VentaList />} />
               <Route path="resumen" element={<ResumenVentas />} />    
     

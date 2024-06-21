@@ -107,7 +107,8 @@ const updateUser = async (user) => {//listo
       ubicacion: user.userData.ubicacion,
       telefono: user.userData.telefono,
       code: user.userData.code,
-      estado: user.userData.estado,
+      activo: user.userData.activo,
+      permisos: user.userData.permisos,
     },
     config
   );

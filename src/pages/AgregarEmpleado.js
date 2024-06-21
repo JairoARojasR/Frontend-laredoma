@@ -3,10 +3,19 @@ import CustomInput from "../components/CustomInput";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Button, Form, Input, DatePicker, Typography, message, Select} from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  DatePicker,
+  Typography,
+  message,
+  Select,
+  Checkbox,
+} from "antd";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import "../styles/custom.css"
+import "../styles/custom.css";
 import {
   createProveedor,
   createEmpleado,
@@ -14,6 +23,7 @@ import {
   resetState,
   updateAUser,
 } from "../features/usuario/usuarioSlice";
+import { getPermisos } from "../features/permisos/permisosSlice";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
@@ -58,6 +68,7 @@ const AgregarEmpleado = () => {
   const getUserId = location.pathname.split("/")[3];
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const permisoState = useSelector((state) => state.permiso.permisos);
 
   const {
     isSuccess,
@@ -74,6 +85,7 @@ const AgregarEmpleado = () => {
     fecha_contratacion,
     telefono,
     fecha_despido,
+    permisos,
     motivo,
     id_rol,
     updatedUser,
@@ -92,11 +104,19 @@ const AgregarEmpleado = () => {
   }, [getUserId]);
 
   useEffect(() => {
+    dispatch(getPermisos());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Permisos:", permisoState);
+  }, [permisoState]);
+
+  useEffect(() => {
     if (isSuccess && createdUser && !isExisting) {
-      toast.success("Proveedor agregado exitosamente!");
+      toast.success("Empleado agregado exitosamente!");
     }
     if (isSuccess && updatedUser) {
-      toast.success("Proveedor actualizado exitosamente!");
+      toast.success("Empleado actualizado exitosamente!");
       //navigate("/admin/lista-vendedores");
     }
     if (isError && message === "ERROR PERMISOS") {
@@ -106,10 +126,10 @@ const AgregarEmpleado = () => {
       return;
     }
     if (isError && !isExisting) {
-      toast.error("Algo salió mal al agregar el Proveedor!");
+      toast.error("Algo salió mal al agregar el Empleado!");
     }
     if (isExisting) {
-      toast.error("¡El Proveedor ya existe!");
+      toast.error("¡El Empleado ya existe!");
       console.log(message);
     }
   }, [isSuccess, isError, isLoading, createdUser, updatedUser, isExisting]);
@@ -127,6 +147,7 @@ const AgregarEmpleado = () => {
       fecha_despido: fecha_despido || null,
       motivo: motivo || "",
       id_rol: id_rol || "",
+      permisos: [] || "",
     },
     validationSchema: schema,
     onSubmit: (values) => {
@@ -163,6 +184,23 @@ const AgregarEmpleado = () => {
           onSubmit={formik.handleSubmit}
           style={{ width: "500px", padding: "30px" }}
         >
+          <label style={labelStyles}>Permisos</label>
+          <Checkbox.Group
+            onChange={(checkedValues) =>
+              formik.setFieldValue("permisos", checkedValues)
+            }
+            value={formik.values.permisos}
+          >
+            {permisoState.map((permiso) => (
+              <div key={permiso._id}>
+                <Checkbox value={permiso._id}>{permiso.nombre}</Checkbox>
+              </div>
+            ))}
+          </Checkbox.Group>
+          <div className="error">
+            {formik.touched.permisos && formik.errors.permisos}
+          </div>
+
           <label style={labelStyles}>Rol del Empleado</label>
           <Select
             placeholder="Seleccione el rol"
