@@ -233,7 +233,7 @@ const Agregarproducto = () => {
     },
   });
 
- const handleImageChange = async (files) => {
+  const handleImageChange = async (files) => {
     setIsUploading(true);
   
     try {
@@ -249,7 +249,7 @@ const Agregarproducto = () => {
           newImages.push(imageInfo);
         });
   
-        // Agregar las nuevas imágenes al estado existente
+        // Agregar las nuevas imágenes al estado existentes
         setImagenes((prevImages) => {
           const updatedImages = [...prevImages, ...newImages];
           formik.setFieldValue("imagenes", updatedImages);
@@ -264,7 +264,6 @@ const Agregarproducto = () => {
       setIsUploading(false);
     }
   };
-  
 
   const handleRemoveImage = async (imageIndex) => {
     setImagenes((prevImages) => {
