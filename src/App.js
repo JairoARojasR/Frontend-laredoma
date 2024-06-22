@@ -24,6 +24,7 @@ import DetalleProducto from "./pages/DetalleProducto";
  import ResumenVentas from "./pages/ResumenVentas";
  import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
  import LoginFormp from "./components/LoginFormp";
+ import ViewProfile from './pages/viewProfile';
  import OTPInput from "./pages/OTPInput";
  import Recovered from "./pages/Recovered";
  import Reset from "./pages/Reset";
@@ -87,6 +88,7 @@ function App() {
               <Route path="empleado/:id" element={<AgregarEmpleado />} />
               <Route path="lista-empleados" element={<Empleadolist />} />
               <Route path="proveedor" element={<AgregarProveedor />} />
+              <Route path="/admin/ver-Perfil" element={<ViewProfile />} />
               <Route path="proveedor/:id" element={<AgregarProveedor />} />     
               <Route path="ventas" element={<AgregarVenta />} />    
               <Route path="lista-venta" element={<VentaList />} />
