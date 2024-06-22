@@ -102,8 +102,8 @@ const updateUser = async (user) => {//listo
 
       nombre: user.userData.nombre,
       correo: user.userData.correo,
-      contrasenia: user.userData.contrasenia,
       //rol: user.userData.rol,
+      id_rol: user.userData.id_rol,
       ubicacion: user.userData.ubicacion,
       telefono: user.userData.telefono,
       code: user.userData.code,

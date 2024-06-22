@@ -312,7 +312,14 @@ export const usuarioSlice = createSlice({
         state.cedula = action.payload.cedula;
         state.correo = action.payload.correo;
         state.contrasenia = action.payload.contrasenia;
+        state.id_rol = action.payload.id_rol;
         state.permisos = action.payload.permisos;
+        state.telefono = action.payload.telefono;
+        state.fecha_contratacion = action.payload.fecha_contratacion;
+        state.fecha_despido = action.payload.fecha_despido;
+        state.motivo = action.payload.motivo;
+        state.direccion = action.payload.direccion;
+
       })
       .addCase(getACustomer.rejected, (state, action) => {
         state.isLoading = false;

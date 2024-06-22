@@ -125,7 +125,7 @@ const Empleadolist = () => {
         action: (
           <div className="button-container">
             <ButtonCustom
-              action={`/admin/ver-vendedor/${userState[i].correo}`}
+              action={`/admin/ver-empleado/${userState[i]._id}`}
               icon={<EyeOutlined />}
               tooltipTitle="Ver detalles"
               buttonType="default"
@@ -133,7 +133,7 @@ const Empleadolist = () => {
             />
 
             <ButtonCustom
-              action={`/admin/vendedor/${userState[i].correo}`}
+              action={`/admin/empleado/${userState[i]._id}`}
               icon={<EditOutlined />}
               tooltipTitle="Editar"
               buttonType="primary"

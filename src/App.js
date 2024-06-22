@@ -27,6 +27,7 @@ import DetalleProducto from "./pages/DetalleProducto";
  import OTPInput from "./pages/OTPInput";
  import Recovered from "./pages/Recovered";
  import Reset from "./pages/Reset";
+ import ViewEmpleado from "./pages/VerEmpleado.js"
  import Empleadolist from "./pages/Empleadolist";
 
 
@@ -83,16 +84,14 @@ function App() {
               <Route path="ver-producto/:id" element={<DetalleProducto />} />     
               <Route path="lista-productos" element={<Productlist />} />
               <Route path="empleado" element={<AgregarEmpleado />} />
+              <Route path="empleado/:id" element={<AgregarEmpleado />} />
               <Route path="lista-empleados" element={<Empleadolist />} />
               <Route path="proveedor" element={<AgregarProveedor />} />
               <Route path="proveedor/:id" element={<AgregarProveedor />} />     
               <Route path="ventas" element={<AgregarVenta />} />    
               <Route path="lista-venta" element={<VentaList />} />
               <Route path="resumen" element={<ResumenVentas />} />    
-    
-
-
-
+              <Route path="ver-empleado/:id" element={<ViewEmpleado />} />
 
             </Route>
             {/* cierreadmin */}
