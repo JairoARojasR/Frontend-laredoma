@@ -43,17 +43,18 @@ const ViewProfileAdmin = () => {
       if (user && user.token) {
         try {
           const response = await axios.get(
-            `${base_url}usuario/getTokenData/${user.token}`
+            `${base_url}persona/getTokenData/${user.token}`
           );
-          
-          console.log("response", response);
-          const correo = response.data.data.correo;
-          setcorreobus(correo);
-          const action = await dispatch(getAUser(correo));
+          const id = response.data.data.id;
+          const action = await dispatch(getAUser(id));
           const userData = action.payload;
-          setrol(userData.rol);
+          setcorreobus(userData.correo);
+          console.log("userData", userData); 
+          setrol(userData.id_rol);
+          const correo = userData.correo;
           const nombre = userData.nombre;
           const cedula = userData.cedula;
+        
           form.setFieldsValue({
             correo: correo,
             nombre: nombre,
@@ -98,6 +99,7 @@ const ViewProfileAdmin = () => {
         form={form}
         validateMessages={validateMessages}
       >
+        <label>Nombre</label>
         <Form.Item
           name="nombre"
           rules={[
@@ -107,9 +109,9 @@ const ViewProfileAdmin = () => {
             },
           ]}
         >
-          <Input disabled={rol === "Vendedor"} />
+          <Input disabled={rol !== "Vendedor"} />
         </Form.Item>
-        
+        <label>Cédula</label>
         <Form.Item
           name="cedula"
           rules={[
@@ -119,9 +121,9 @@ const ViewProfileAdmin = () => {
             },
           ]}
         >
-         <Input disabled={rol === "Vendedor"} />
+         <Input disabled={rol !== "Vendedor"} />
         </Form.Item>
-
+        <label>Correo</label>
         <Form.Item
           name="correo"
           rules={[

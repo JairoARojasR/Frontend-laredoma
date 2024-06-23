@@ -1,0 +1,17 @@
+.custom{
+    font-weight: 500;
+    font-size: medium;
+    margin: 13px 0;
+    background-color: #e7e9fe;
+    padding: 2px 10px;
+    border-radius: 15px;
+}
+
+.max_min {
+    display: flex;
+    padding-bottom: 15px;
+}
+
+.max_min section {
+    margin-right: 20px; /* Ajusta este valor según el espacio que necesites */
+}

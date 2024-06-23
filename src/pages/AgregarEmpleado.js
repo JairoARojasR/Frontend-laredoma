@@ -24,6 +24,7 @@ import {
   updateAUser,
 } from "../features/usuario/usuarioSlice";
 import { getPermisos } from "../features/permisos/permisosSlice";
+import { getRoles } from "../features/rol/rolSlice";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
@@ -69,6 +70,7 @@ const AgregarEmpleado = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const permisoState = useSelector((state) => state.permiso.permisos);
+  const rolState = useSelector((state) => state.rol.roles);
 
   const {
     isSuccess,
@@ -105,6 +107,7 @@ const AgregarEmpleado = () => {
 
   useEffect(() => {
     dispatch(getPermisos());
+    dispatch(getRoles());
   }, [dispatch]);
 
   useEffect(() => {
@@ -147,7 +150,7 @@ const AgregarEmpleado = () => {
       fecha_despido: fecha_despido || null,
       motivo: motivo || "",
       id_rol: id_rol || "",
-      permisos: [] || "",
+      permisos: permisos || [],
     },
     validationSchema: schema,
     onSubmit: (values) => {
@@ -177,7 +180,6 @@ const AgregarEmpleado = () => {
       <h3 className="mb-4  title">
         {getUserId !== undefined ? "Editar" : "Agregar"} Empleado
       </h3>
-
       <div>
         <form
           action=""
@@ -207,9 +209,11 @@ const AgregarEmpleado = () => {
             onChange={(value) => formik.setFieldValue("id_rol", value)}
             value={formik.values.id_rol}
             onBlur={formik.handleBlur("id_rol")}
+            style={{ width: "100%" }}
           >
-            <Option value="6669074f41dcdb08eee0128e">Cajera</Option>
-            <Option value="6669075e41dcdb08eee01291">Mecanico</Option>
+             {rolState.map((rol) => (
+          <Option key={rol._id} value={rol._id}>{rol.nombre}</Option>
+        ))}
           </Select>
           <div className="error">
             {formik.touched.id_rol && formik.errors.id_rol}
@@ -253,7 +257,7 @@ const AgregarEmpleado = () => {
 
           {/* Cierre Cedula */}
 
-          <label style={labelStyles}>Correo del Proveedor</label>
+          <label style={labelStyles}>Correo del Empleado</label>
           <CustomInput
             type="text"
             label="Correo electrónico"
@@ -292,7 +296,7 @@ const AgregarEmpleado = () => {
 
           {/* Cierre Contraseña */}
 
-          <label style={labelStyles}>Número Telefonico del Proveedor</label>
+          <label style={labelStyles}>Número Telefonico del Empleado</label>
           <CustomInput
             type="number"
             label="Número Telefonico del Proveedor"
@@ -335,7 +339,7 @@ const AgregarEmpleado = () => {
 
           {/* Cierre fecha contratacion */}
 
-          <label style={labelStyles}>Fecha de Despido</label>
+          <label style={labelStyles}>Fecha de Despido (Opcional)</label>
           <DatePicker
             style={{ width: "100%" }}
             placeholder="Seleccione la fecha de despido"
@@ -360,7 +364,7 @@ const AgregarEmpleado = () => {
 
           {/* Cierre fecha despido */}
 
-          <label style={labelStyles}>Motivo Despido</label>
+          <label style={labelStyles}>Motivo Despido (Opcional) </label>
           <CustomInput
             type="text"
             label="Motivo Despido"
@@ -379,7 +383,7 @@ const AgregarEmpleado = () => {
             className="btn btn-success border-0 rounded-3 my-5"
             type="submit"
           >
-            {getUserId !== undefined ? "Editar" : "Agregar"} Proveedor
+            {getUserId !== undefined ? "Editar" : "Agregar"} Empleado
           </button>
 
           {getUserId !== undefined && (

@@ -9,18 +9,26 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getMarcasauto } from "../features/marca_auto/marcaautoSlice";
-import { getUsers, createUser, createdUser } from "../features/usuario/usuarioSlice";
+import {
+  getUsers,
+  createUser,
+  createdUser,
+} from "../features/usuario/usuarioSlice";
 import { getCategorias } from "../features/categoria/categoriaSlice";
 import userService from "../features/usuario/usuarioService";
 import "../styles/Addproducts.css";
 import {
   createProducts,
-  resetState,
   updateAProduct,
   getAProduct,
   getProducts,
 } from "../features/producto/productoSlice";
-import { createVenta, getVenta, getVentas } from "../features/venta/ventaSlice";
+import {
+  createVenta,
+  getVenta,
+  getVentas,
+  resetState,
+} from "../features/venta/ventaSlice";
 import {
   getServiciomantrep,
   getServiciosmantrep,
@@ -29,42 +37,52 @@ import {
 const { Option } = Select;
 
 // Esquema de validación Yup para el formulario de venta
-const schema = yup.object().shape({
-  id_cajera: yup.string().required("Cajera es requerida"),
-  total_venta: yup
-    .number()
-    .min(1, "El total de la venta debe ser mayor que cero")
-    .required("Total de la venta es requerido"),
-  metodo_pago: yup.string().required("Método de pago es requerido"),
-  productos_vendidos: yup.array().of(
-    yup.object().shape({
-      id_producto: yup.string().required("Producto es requerido"),
-      nombre: yup.string().required("Nombre es requerido"),
-      cantidad: yup
-        .number()
-        .min(1, "Cantidad debe ser mayor que cero")
-        .required("Cantidad es requerida"),
-      precio: yup.number().min(1, "Precio debe ser mayor que cero").required("Precio es requerido"),
-    })
-  ),
-  servicios_prestados: yup.array().of(
-    yup.object().shape({
-      id_servicio: yup.string().required("Servicio es requerido"),
-      placaCarro: yup.string().required("Placa del carro es requerida"),
-      id_mecanico: yup.string().required("Mecánico es requerido"),
-      precio_manoDeObra: yup
-        .number()
-        .min(1, "Precio de mano de obra debe ser mayor que cero")
-        .required("Precio de mano de obra es requerido"),
-    })
-  ),
-}).test('at-least-one', 'Debe seleccionar al menos un producto vendido o un servicio prestado', function(value) {
-  const { productos_vendidos, servicios_prestados } = value;
-  if (productos_vendidos.length === 0 && servicios_prestados.length === 0) {
-    return false;
-  }
-  return true;
-});
+const schema = yup
+  .object()
+  .shape({
+    id_cajera: yup.string().required("Cajera es requerida"),
+    total_venta: yup
+      .number()
+      .min(1, "El total de la venta debe ser mayor que cero")
+      .required("Total de la venta es requerido"),
+    metodo_pago: yup.string().required("Método de pago es requerido"),
+    productos_vendidos: yup.array().of(
+      yup.object().shape({
+        id_producto: yup.string().required("Producto es requerido"),
+        nombre: yup.string().required("Nombre es requerido"),
+        cantidad: yup
+          .number()
+          .min(1, "Cantidad debe ser mayor que cero")
+          .required("Cantidad es requerida"),
+        precio: yup
+          .number()
+          .min(1, "Precio debe ser mayor que cero")
+          .required("Precio es requerido"),
+      })
+    ),
+    servicios_prestados: yup.array().of(
+      yup.object().shape({
+        id_servicio: yup.string().required("Servicio es requerido"),
+        placaCarro: yup.string().required("Placa del carro es requerida"),
+        id_mecanico: yup.string().required("Mecánico es requerido"),
+        precio_manoDeObra: yup
+          .number()
+          .min(1, "Precio de mano de obra debe ser mayor que cero")
+          .required("Precio de mano de obra es requerido"),
+      })
+    ),
+  })
+  .test(
+    "at-least-one",
+    "Debe seleccionar al menos un producto vendido o un servicio prestado",
+    function (value) {
+      const { productos_vendidos, servicios_prestados } = value;
+      if (productos_vendidos.length === 0 && servicios_prestados.length === 0) {
+        return false;
+      }
+      return true;
+    }
+  );
 
 const AgregarVenta = () => {
   const dispatch = useDispatch();
@@ -99,21 +117,21 @@ const AgregarVenta = () => {
   }, [dispatch]);
 
   const newventa = useSelector((state) => state.venta);
-  const { isSuccess, isError, isLoading, isExisting, createdVenta, message } = newventa;
+  const { isSuccess, isError, isLoading, isExisting, createdVenta, message } =
+    newventa;
 
   const handleAgregarVenta = () => {
     formik.handleSubmit();
   };
 
   const newUser = useSelector((state) => state.user);
-  const {
-    createdUser
-  } = newUser;
+  const { createdUser } = newUser;
 
   useEffect(() => {
     if (isSuccess && createdVenta && !isExisting) {
       toast.success("Venta agregado exitosamente!");
       formik.resetForm();
+      dispatch(resetState());
     }
 
     if (isError && !isExisting) {
@@ -124,8 +142,7 @@ const AgregarVenta = () => {
       toast.error(
         "Error no tienes permisos necesarios para realizar esta acción"
       );
-            formik.resetForm();
-
+      formik.resetForm();
       return;
     }
 
@@ -159,6 +176,7 @@ const AgregarVenta = () => {
         dispatch(getCategorias());
         dispatch(getServiciosmantrep());
         dispatch(getProducts());
+        setProductoYaAgregado([]);
       }, 3000);
     },
   });
@@ -190,37 +208,47 @@ const AgregarVenta = () => {
       const productoEncontrado = productoState.find(
         (prod) => prod._id === nombreProducto
       );
-
       if (productoEncontrado) {
-        const producto = {
-          id_producto: isEditing ? editingProductId : productoEncontrado._id,
-          nombre: productoEncontrado.nombre,
-          cantidad: cantidadProducto,
-          precio: precioProducto,
-        };
-
-        if (isEditing) {
-          const updatedProductos = formik.values.productos_vendidos.map(
-            (prod) => (prod.id_producto === editingProductId ? producto : prod)
-          );
-          formik.setFieldValue("productos_vendidos", updatedProductos);
-          setIsEditing(false);
-          setEditingProductId(null);
-        } else {
-          formik.setFieldValue("productos_vendidos", [
-            ...formik.values.productos_vendidos,
-            producto,
+        if (cantidadProducto <= productoEncontrado.cantidad_disponible) {
+          const producto = {
+            id_producto: isEditing ? editingProductId : productoEncontrado._id,
+            nombre: productoEncontrado.nombre,
+            cantidad: cantidadProducto,
+            precio: precioProducto,
+          };
+          if (isEditing) {
+            const updatedProductos = formik.values.productos_vendidos.map(
+              (prod) =>
+                prod.id_producto === editingProductId ? producto : prod
+            );
+            formik.setFieldValue("productos_vendidos", updatedProductos);
+            setIsEditing(false);
+            setEditingProductId(null);
+          } else {
+            formik.setFieldValue("productos_vendidos", [
+              ...formik.values.productos_vendidos,
+              producto,
+            ]);
+          }
+          setProductoYaAgregado([
+            ...productoYaAgregado,
+            productoEncontrado._id,
           ]);
+          // Limpiar campos después de agregar
+          setNombreProducto("");
+          setPrecioProducto(0);
+          setCantidadProducto(1);
+        } else {
+          const cantidadDisponible = productoEncontrado.cantidad_disponible;
+          toast.error(
+            `La cantidad solicitada supera la cantidad disponible. Quedan ${cantidadDisponible} unidades disponibles.`
+          );
         }
-
-        setProductoYaAgregado([...productoYaAgregado, productoEncontrado._id]);
-        // Limpiar campos después de agregar
-        setNombreProducto("");
-        setPrecioProducto(0);
-        setCantidadProducto(1);
       } else {
         toast.error("Producto no encontrado");
       }
+    } else {
+      toast.error("Por favor complete todos los campos con valores válidos");
     }
   };
 
@@ -232,13 +260,11 @@ const AgregarVenta = () => {
       const mecanicoEncontrado = userState.find(
         (user) => user._id === mecanico
       );
-      console.log("id servicio encontrado", servicioEncontrado._id," editingServicio ", editingServicioId);
-      console.log("mecanico ", mecanicoEncontrado._id, " editing ",editingMecanicoId );
-      if(isEditing2){
+      if (isEditing2) {
         seteditingServicioId(servicioEncontrado._id);
         seteditingMecanicoId(mecanico);
       }
-    
+
       if (servicioEncontrado && mecanico) {
         const servicio = {
           id_servicio: isEditing2 ? editingServicioId : servicioEncontrado._id,
@@ -296,7 +322,7 @@ const AgregarVenta = () => {
   };
 
   const handleEditarServicio = (servicio) => {
-    console.log("AAAAAAAAAAAAAAAAAAAAYYYYYYY",servicio.nombre, );
+    console.log("AAAAAAAAAAAAAAAAAAAAYYYYYYY", servicio.nombre);
     setNombreServicio(servicio.id_servicio);
     setMecanico(servicio.id_mecanico);
     setPlacaCarro(servicio.placaCarro);
@@ -317,7 +343,6 @@ const AgregarVenta = () => {
     setPlacaCarro(e.target.value);
   };
 
-  
   const handleMecanicoChange = (e) => {
     setMecanico(e.target.value);
   };
@@ -330,28 +355,30 @@ const AgregarVenta = () => {
       telefono: formik.values.telefono_cliente,
       id_rol: "666e14291f37b8e8b13ad363",
     };
-  
+
     try {
       // Antes de crear el cliente, verifica si ya existe uno con la misma cédula
-      const existeCliente = await axios.get(`${base_url}persona/cedula/${nuevoCliente.cedula}`);
-      
+      const existeCliente = await axios.get(
+        `${base_url}persona/cedula/${nuevoCliente.cedula}`
+      );
+
       if (existeCliente.data) {
         // Si existe un cliente con la misma cédula, muestra un mensaje o maneja el error adecuadamente
         alert("Ya existe un cliente con esa cédula.");
         return;
       }
-  
+
       // Si no existe, procede a crear el nuevo cliente
       const response = await axios.post(`${base_url}persona/`, nuevoCliente);
       const clienteCreado = response.data; // Obtener los datos del cliente creado de la respuesta
-  
+
       // Actualiza los campos del formulario con los datos del cliente creado
-      formik.setFieldValue("cedula_cliente", clienteCreado.cedula);  
+      formik.setFieldValue("cedula_cliente", clienteCreado.cedula);
       formik.setFieldValue("nombre_cliente", clienteCreado.nombre);
       formik.setFieldValue("correo_cliente", clienteCreado.correo);
       formik.setFieldValue("telefono_cliente", clienteCreado.telefono);
       formik.setFieldValue("id_cliente", clienteCreado._id);
-      
+
       setShowAddClientModal(false);
       dispatch(getUsers());
     } catch (error) {
@@ -360,13 +387,11 @@ const AgregarVenta = () => {
       // Aquí puedes mostrar un mensaje de error o manejar la situación según tu flujo de la aplicación
     }
   };
-  
-
 
   return (
     <div className="formulario_productos">
       <h3 className="mb-4 title">
-        Agregar Venta
+        Registrar Venta
         {console.log("formik", formik.values)}
       </h3>
 
@@ -376,7 +401,7 @@ const AgregarVenta = () => {
           className="d-flex gap-3 flex-column"
         >
           <section className="form_section">
-            <div className="form_data">
+            <div className="columna1">
               <label>Cajera</label>
               <Select
                 showSearch
@@ -407,64 +432,110 @@ const AgregarVenta = () => {
                 <div className="error_message">{formik.errors.id_cajera}</div>
               )}
 
-              <label>Buscar Cliente</label>
+              <label>Cedula del Cliente</label>
+              <CustomInput
+                type="text"
+                val={formik.values.cedula_cliente}
+                onChng={(e) =>
+                  formik.setFieldValue("cedula_cliente", e.target.value)
+                }
+                onBlr={formik.handleBlur("cedula_cliente")}
+              />
+
+              <label>Correo del Cliente</label>
+              <CustomInput
+                type="text"
+                val={formik.values.correo_cliente}
+                onChng={(e) =>
+                  formik.setFieldValue("correo_cliente", e.target.value)
+                }
+                onBlr={formik.handleBlur("correo_cliente")}
+              />
+
+              <label>Método de Pago</label>
               <Select
-                showSearch
-                placeholder="Selecciona un cliente"
-                optionFilterProp="children"
-                value={formik.values.id_cliente}
-                onChange={(value) => {
-                  formik.setFieldValue("id_cliente", value);
-                  const clienteSeleccionado = userState.find(
-                    (user) => user._id === value
-                  );
-                  if (clienteSeleccionado) {
-                    formik.setFieldValue(
-                      "nombre_cliente",
-                      clienteSeleccionado.nombre
-                    );
-                    formik.setFieldValue(
-                      "correo_cliente",
-                      clienteSeleccionado.correo
-                    );
-                    formik.setFieldValue(
-                      "telefono_cliente",
-                      clienteSeleccionado.telefono
-                    );
-                    formik.setFieldValue(
-                      "cedula_cliente",
-                      clienteSeleccionado.cedula
-                    );
-                  }
-                }}
-                onBlur={formik.handleBlur("id_cliente")}
+                placeholder="Selecciona un método de pago"
+                value={formik.values.metodo_pago}
+                onChange={(value) => formik.setFieldValue("metodo_pago", value)}
+                onBlur={formik.handleBlur("metodo_pago")}
                 style={{ width: "100%" }}
               >
-                {userState.map((user) => {
-                  if (user.id_rol === "666e14291f37b8e8b13ad363") {
-                    return (
-                      <Option
-                        key={user._id}
-                        value={user._id}
-                        disabled={!user.activo}
-                      >
-                        {`${user.cedula}`}{" "}
-                      </Option>
-                    );
-                  } else {
-                    return null;
-                  }
-                })}
+                <Option value="Efectivo">Efectivo</Option>
+                <Option value="Tarjeta">Tarjeta</Option>
+                <Option value="Transferencia">Transferencia</Option>
               </Select>
-
-              {formik.touched.id_cliente && formik.errors.id_cliente && (
-                <div className="error_message">{formik.errors.id_cliente}</div>
+              {formik.touched.metodo_pago && formik.errors.metodo_pago && (
+                <div className="error_message">{formik.errors.metodo_pago}</div>
               )}
+            </div>
+            <div className="columna2">
+              <label>Buscar Cliente</label>
 
-              {/* Botón para agregar nuevo cliente */}
-              <Button onClick={() => setShowAddClientModal(true)}>
-                Agregar Cliente
-              </Button>
+              <div
+                className="BotonInput"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "75% 25%",
+                  gap: "5px",
+                }}
+              >
+                <Select
+                  showSearch
+                  placeholder="Selecciona un cliente"
+                  optionFilterProp="children"
+                  value={formik.values.id_cliente}
+                  onChange={(value) => {
+                    formik.setFieldValue("id_cliente", value);
+                    const clienteSeleccionado = userState.find(
+                      (user) => user._id === value
+                    );
+                    if (clienteSeleccionado) {
+                      formik.setFieldValue(
+                        "nombre_cliente",
+                        clienteSeleccionado.nombre
+                      );
+                      formik.setFieldValue(
+                        "correo_cliente",
+                        clienteSeleccionado.correo
+                      );
+                      formik.setFieldValue(
+                        "telefono_cliente",
+                        clienteSeleccionado.telefono
+                      );
+                      formik.setFieldValue(
+                        "cedula_cliente",
+                        clienteSeleccionado.cedula
+                      );
+                    }
+                  }}
+                  onBlur={formik.handleBlur("id_cliente")}
+                  style={{ width: "100%" }}
+                >
+                  {userState.map((user) => {
+                    if (user.id_rol === "666e14291f37b8e8b13ad363") {
+                      return (
+                        <Option
+                          key={user._id}
+                          value={user._id}
+                          disabled={!user.activo}
+                        >
+                          {`${user.cedula}`}{" "}
+                        </Option>
+                      );
+                    } else {
+                      return null;
+                    }
+                  })}
+                </Select>
+                {formik.touched.id_cliente && formik.errors.id_cliente && (
+                  <div className="error_message">
+                    {formik.errors.id_cliente}
+                  </div>
+                )}
+                <Button onClick={() => setShowAddClientModal(true)}>
+                  Agregar Cliente
+                </Button>
+              </div>
 
               {/* Modal para agregar cliente */}
               <Modal
@@ -552,18 +623,6 @@ const AgregarVenta = () => {
                   </Form.Item>
                 </Form>
               </Modal>
-
-
-              <label>Cedula del Cliente</label>
-              <CustomInput
-                type="text"
-                val={formik.values.cedula_cliente}
-                onChng={(e) =>
-                  formik.setFieldValue("cedula_cliente", e.target.value)
-                }
-                onBlr={formik.handleBlur("cedula_cliente")}
-              />
-
               <label>Nombre del Cliente</label>
               <CustomInput
                 type="text"
@@ -573,17 +632,6 @@ const AgregarVenta = () => {
                 }
                 onBlr={formik.handleBlur("nombre_cliente")}
               />
-
-              <label>Correo del Cliente</label>
-              <CustomInput
-                type="text"
-                val={formik.values.correo_cliente}
-                onChng={(e) =>
-                  formik.setFieldValue("correo_cliente", e.target.value)
-                }
-                onBlr={formik.handleBlur("correo_cliente")}
-              />
-
               <label>Número de telefono del Cliente</label>
               <CustomInput
                 type="number"
@@ -593,7 +641,6 @@ const AgregarVenta = () => {
                 }
                 onBlr={formik.handleBlur("telefono_cliente")}
               />
-
               <label>Total Venta</label>
               <Input
                 type="number"
@@ -606,28 +653,12 @@ const AgregarVenta = () => {
               {formik.touched.total_venta && formik.errors.total_venta && (
                 <div className="error_message">{formik.errors.total_venta}</div>
               )}
-
-              <label>Método de Pago</label>
-              <Select
-                placeholder="Selecciona un método de pago"
-                value={formik.values.metodo_pago}
-                onChange={(value) => formik.setFieldValue("metodo_pago", value)}
-                onBlur={formik.handleBlur("metodo_pago")}
-                style={{ width: "100%" }}
-              >
-                <Option value="Efectivo">Efectivo</Option>
-                <Option value="Tarjeta">Tarjeta</Option>
-                <Option value="Transferencia">Transferencia</Option>
-              </Select>
-              {formik.touched.metodo_pago && formik.errors.metodo_pago && (
-                <div className="error_message">{formik.errors.metodo_pago}</div>
-              )}
             </div>
           </section>
-          {console.log("AAAAAAAAAAAAAAAAAAa", nombreServicio)}
+          <hr className="divider"></hr>
+          <h4>Productos Vendidos</h4>
           <section className="form_section">
-            <div className="form_data">
-              <h4>Productos Vendidos</h4>
+            <div className="columna1">
               <label>Nombre del Producto</label>
               <Select
                 showSearch
@@ -646,10 +677,17 @@ const AgregarVenta = () => {
                 style={{ width: "100%" }}
               >
                 {productoState.map((producto) => (
-            <Option key={producto._id} value={producto._id} disabled={productoYaAgregado.includes(producto._id)}>
-              {producto.nombre}
-            </Option>
-          ))}
+                  <Option
+                    key={producto._id}
+                    value={producto._id}
+                    disabled={
+                      !producto.activo ||
+                      productoYaAgregado.includes(producto._id)
+                    }
+                  >
+                    {producto.nombre}
+                  </Option>
+                ))}
               </Select>
 
               <label>Cantidad</label>
@@ -676,7 +714,8 @@ const AgregarVenta = () => {
               >
                 {isEditing ? "Actualizar Producto" : "Agregar Producto"}
               </Button>
-
+            </div>
+            <div className="columna2">
               <Table
                 dataSource={formik.values.productos_vendidos}
                 columns={[
@@ -731,10 +770,10 @@ const AgregarVenta = () => {
               />
             </div>
           </section>
-
-          <section className="form_section">
-            <div className="form_data">
-              <h4>Servicios</h4>
+          <hr className="divider"></hr>
+          <h4>Servicios</h4>
+          <section className="form_section2">
+            <div className="columna1">
               <label>Nombre del Servicio</label>
               <Select
                 showSearch
@@ -753,7 +792,7 @@ const AgregarVenta = () => {
                 ))}
               </Select>
 
-              <label>Nombre del Mecanico ESTE S</label>
+              <label>Nombre del Mecanico</label>
               <Select
                 showSearch
                 placeholder="Selecciona un Mecanico"
@@ -800,16 +839,18 @@ const AgregarVenta = () => {
                 onChange={(e) => setPrecioManoDeObra(Number(e.target.value))}
                 min="1"
               />
-              
 
               <Button
                 type="primary"
                 onClick={handleAgregarServicio}
                 style={{ marginTop: "10px" }}
               >
-                {isEditing2 ? "Actualizar Servicio Prestado" : "Agregar Servicio Prestado"}
+                {isEditing2
+                  ? "Actualizar Servicio Prestado"
+                  : "Agregar Servicio Prestado"}
               </Button>
-
+            </div>
+            <div className="columna2">
               <Table
                 dataSource={formik.values.servicios_prestados}
                 columns={[
@@ -864,7 +905,6 @@ const AgregarVenta = () => {
                     key: "acciones",
                     render: (text, record) => (
                       <div>
-                       
                         <Button
                           type="link"
                           danger

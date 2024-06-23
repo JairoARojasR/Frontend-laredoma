@@ -178,24 +178,30 @@ const Marcaautolist = () => {
       toast.error("El nombre de la marca no puede estar vacío.");
       return;
     }
-
     try {
       const resultAction = await dispatch(createMarcaauto({ nombre: newMarcaName }));
+      if (resultAction.type.endsWith('fulfilled')) {
       setIsModalOpen(false);
       setNewMarcaName("");
       dispatch(getMarcasauto()); // Refresh the data after adding
-
-      if (resultAction.type.endsWith('fulfilled')) {
-        toast.success('Marca de auto agregada exitosamente!');
-      } 
-    } catch (error) {
-      toast.error("La marca de auto ya existe");
+      toast.success('Marca de auto agregada exitosamente!');
+    } else {
+      throw new Error("Unknown error");
     }
-  };
+  } catch (error) {
+    if (error.message.includes("already exists")) {
+      toast.error("La Marca de auto ya existe");
+    } else {
+      toast.error("La Marca de auto ya existe");
+    }
+  }
+};
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  
 
   const columns = [
     { title: 'Nombre', dataIndex: 'nombre', width: '25%', editable: true },

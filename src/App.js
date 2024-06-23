@@ -18,19 +18,23 @@ import DetalleProducto from "./pages/DetalleProducto";
  import Serviciosmantreplist from "./pages/Serviciosmantreplist";
  import Agregarproducto from "./pages/Agregarproducto";
  import AgregarProveedor from "./pages/AgregarProveedor";
- import CrearVenta from "./pages/CrearVenta";
  import AgregarVenta from "./pages/AgregarVenta";
  import VentaList from "./pages/Ventalist";
  import ResumenVentas from "./pages/ResumenVentas";
  import ConfirmacionUsuario from "./pages/ConfirmacionUsuario";
  import LoginFormp from "./components/LoginFormp";
  import ViewProfile from './pages/viewProfile';
+ import ViewNotf from './pages/notificacioneslist.js';
  import OTPInput from "./pages/OTPInput";
  import Recovered from "./pages/Recovered";
  import Reset from "./pages/Reset";
  import ViewEmpleado from "./pages/VerEmpleado.js"
  import Empleadolist from "./pages/Empleadolist";
-
+ import Rollist from "./pages/Rollist.js";
+ import Proveedoreslist from "./pages/Proveedoreslist.js";
+ import DetalleVenta from "./pages/DetalleVenta.js";
+ import verProveedor from "./pages/VerProveedor.js";
+ import ViewProveedor from "./pages/VerProveedor.js"
 
 export const RecoveryContext = createContext();
 
@@ -69,7 +73,7 @@ function App() {
             <Route path="/confirmar-codigo" element={<OTPInput />} />
             <Route path="/nueva-contrasenia" element={<Reset />} />
             <Route path="/contrasenia-recuperada" element={<Recovered />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
 
 
             {/* admin */}
@@ -87,13 +91,19 @@ function App() {
               <Route path="empleado" element={<AgregarEmpleado />} />
               <Route path="empleado/:id" element={<AgregarEmpleado />} />
               <Route path="lista-empleados" element={<Empleadolist />} />
+              <Route path="ver-empleado/:id" element={<ViewEmpleado />} />        
+              <Route path="lista-roles" element={<Rollist />} />
+              <Route path="lista-proveedores" element={<Proveedoreslist />} />
               <Route path="proveedor" element={<AgregarProveedor />} />
               <Route path="/admin/ver-Perfil" element={<ViewProfile />} />
-              <Route path="proveedor/:id" element={<AgregarProveedor />} />     
+              <Route path="/admin/ver-Notificaciones" element={<ViewNotf />} />
+              <Route path="proveedor/:id" element={<AgregarProveedor />} />  
+              <Route path="ver-proveedor/:id" element={<ViewProveedor />} />        
               <Route path="ventas" element={<AgregarVenta />} />    
               <Route path="lista-venta" element={<VentaList />} />
+              <Route path="ver-venta/:id" element={<DetalleVenta />} />     
               <Route path="resumen" element={<ResumenVentas />} />    
-              <Route path="ver-empleado/:id" element={<ViewEmpleado />} />
+  
 
             </Route>
             {/* cierreadmin */}

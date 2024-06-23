@@ -18,7 +18,7 @@
 .encabezado {
 	font-weight: bold;
 	margin: 0;
-    color: white;
+    color: #060f17;
     font-size: 30px;
 }
 
@@ -30,8 +30,9 @@
 }
 
 .error_message {
-  color: rgb(17, 230, 219);
+  color: #060f17;
   font-size: 15px;
+  font-weight: bold;
   margin-top: -8px;
   text-align: left !important;
   margin-bottom: -3px;
@@ -48,9 +49,8 @@
     border-radius: 10px;
 	margin-top: 10px;
     border: none;
-    border-bottom: 5px solid #5d792d;
-    background-color: #a6ce36;
-    color: #000000;
+    background-color: #060f17;
+    color: #ffffff;
     font-size: 16px;
     padding: 5px 30px;
     font-family: "Inria Sans";
@@ -59,7 +59,7 @@
 }
 
 .button_green:active {
-    background-color: #86a72b;
+    background-color: #10283d;
     border: none;
     border-top: 2px solid #86a72b;
 	border-bottom: 3px solid #5d792d;
@@ -94,7 +94,7 @@
 }
 
 .form_login {
-	background-color: #0f1c24;
+	background-color: #e6e950;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -106,7 +106,7 @@
 
 .form_login span{
     font-size: 13px;
-    color: rgb(143, 131, 255);
+    color: #060f17;
     font-family: 'Inria Sans';
 }
 
@@ -123,7 +123,7 @@
 
 .form_login input:focus {
 	border: none;
-	outline: 3px double #a6ce36;
+	outline: 1px solid #060f17;
 	box-sizing: border-box;
 	transition: 0.2s;
 }
@@ -147,7 +147,7 @@
 }
 
 .form_container a{
-	color: #7e7e7e;
+	color: #060f17;
 	text-decoration: none;
 	font-size: 15px;
 	margin: 10px;
@@ -261,7 +261,7 @@
 .overlay_right {
 	right: 0;
 	transform: translateX(0);
-	background-color: #a6ce36;
+	background-color: #060f17;
 }
 
 .container.right_panel-active .overlay_right {

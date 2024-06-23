@@ -25,6 +25,7 @@ const DetalleProducto = () => {
     productCant,
     productPrice,
     productProv,
+    productCantMin,
     productImg,
     productCategory,
     productMarca,
@@ -105,6 +106,9 @@ const DetalleProducto = () => {
 
             <h6>Cantidad:</h6>
             <p>{productCant}</p>
+
+            <h6>Cantidad Minima:</h6>
+            <p>{productCantMin}</p>
 
             <h6>Categoría:</h6>
             <p>{getCategoryName(productCategory)}</p>

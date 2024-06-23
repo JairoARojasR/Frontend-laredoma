@@ -1,5 +1,7 @@
+
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Flex, Tooltip, Switch, Tabs, Space, Input } from "antd";
+import { Button, Flex, Tooltip, Switch } from "antd";
+import { Input, Space } from "antd";
 import Highlighter from "react-highlight-words";
 import CustomTable from "../components/CustomTable";
 import CustomModal from "../components/CustomModal";
@@ -9,10 +11,11 @@ import { useDispatch, useSelector } from "react-redux";
 import ButtonCustom from "../components/ButtonCustom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import usuarioService from "../features/usuario/usuarioService"
-import { getRoles } from "../features/rol/rolSlice";
 import {
   CheckOutlined,
   CloseOutlined,
+  ManOutlined,
+  WomanOutlined,
 } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import {
@@ -21,6 +24,7 @@ import {
   deleteAUser,
   updateAUser,
 } from "../features/usuario/usuarioSlice";
+import { Link } from "react-router-dom";
 import {
   SearchOutlined,
   EditOutlined,
@@ -39,19 +43,16 @@ const columns = [
   {
     title: "Nombre",
     dataIndex: "nombre",
-    sorter: (a, b) => a.nombre.length - b.nombre.length,
   },
 
   {
     title: "Correo",
     dataIndex: "correo",
-    sorter: (a, b) => a.correo.length - b.correo.length,
   },
- 
+
   {
     title: "Estado",
-    dataIndex: "activo",
-    sorter: (a, b) => a.precio - b.precio,
+    dataIndex: "estado",
   },
   {
     title: "Acciones",
@@ -59,18 +60,15 @@ const columns = [
   },
 ];
 
-const Empleadolist = () => {
+const Proveedoreslist = () => {
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState("");
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [selectedEmpleado, setselectedEmpleado] = useState("6669074f41dcdb08eee0128e");
   const searchInput = useRef(null);
   const dispatch = useDispatch();
 
-  const userState = useSelector((state) => state.user.users) || [];
-  const rolState = useSelector((state) => state.rol.roles);
-
+  const userState = useSelector((state) => state.user.users);
   const [setData1] = useState([]);
 
   const handleSwitchChange = async (userId, property, checked) => {
@@ -95,30 +93,30 @@ const Empleadolist = () => {
     }
   };
 
-  const getDataByRole = (roleId) => {
-    return userState
-      .filter(user => user.id_rol === roleId)
-      .map((user, index) => ({
-        key: index + 1,
-        nombre: user.nombre,
-        cedula: user.cedula,
-        correo: user.correo,
-        rol: user.id_rol,
-        contrasenia: user.contrasenia,
-        activo: (
+  const data1 = [];
+  for (let i = 0; i < userState.length; i++) {
+    if (userState[i].id_rol === "6667c97dbb2265c8a8eba941") {
+      data1.push({
+        key: i + 1,
+        nombre: userState[i].nombre,
+        cedula: userState[i].cedula,
+        correo: userState[i].correo,
+        rol: userState[i].rol,
+        contrasenia: userState[i].contrasenia,
+        estado: (
           <Space direction="vertical">
             <Switch
               checkedChildren={<CheckOutlined />}
               unCheckedChildren={<CloseOutlined />}
-              defaultChecked={user.activo}
-              onChange={(checked) => handleSwitchChange(user._id, 'activo', checked)}
+              defaultChecked={userState[i].activo}
+              onChange={(checked) => handleSwitchChange(userState[i]._id, 'activo', checked)}
             />
           </Space>
         ),
         action: (
           <div className="button-container">
             <ButtonCustom
-              action={`/admin/ver-empleado/${user._id}`}
+              action={`/admin/ver-proveedor/${userState[i]._id}`}
               icon={<EyeOutlined />}
               tooltipTitle="Ver detalles"
               buttonType="default"
@@ -126,7 +124,7 @@ const Empleadolist = () => {
             />
 
             <ButtonCustom
-              action={`/admin/empleado/${user._id}`}
+              action={`/admin/proveedor/${userState[i]._id}`}
               icon={<EditOutlined />}
               tooltipTitle="Editar"
               buttonType="primary"
@@ -134,14 +132,15 @@ const Empleadolist = () => {
             />
           </div>
         ),
-      }));
-  };
+      });
+    }
+  }
 
   useEffect(() => {
     dispatch(resetState());
     dispatch(getUsers());
-    dispatch(getRoles());
-  }, [dispatch]);
+  }, []);
+
 
   const showModal = (userId) => {
     setOpen(true);
@@ -163,25 +162,12 @@ const Empleadolist = () => {
     setSearchText("");
   };
 
-  const onChangeTab = (key) => {
-    setselectedEmpleado(key);
-  };
-
-  const items = rolState
-  .filter((role) => role.nombre !== "Cliente" && role.nombre !== "Proveedor") 
-  .map((role) => ({
-    key: role._id,
-    label: role.nombre,
-    children: <CustomTable columns={columns} dataSource={getDataByRole(role._id)} />,
-  }));
-
-
   return (
     <div>
-      <h3 className="mb-4 title">Lista de Empleados</h3>
-      <Tabs defaultActiveKey="6669074f41dcdb08eee0128e" items={items} onChange={onChangeTab} />
+      <h3 className="mb-4 title">Lista de Proveedores</h3>
+      <CustomTable columns={columns} dataSource={data1} />
     </div>
   );
 };
 
-export default withBodyClass(Empleadolist, 'body-admin');
+export default withBodyClass(Proveedoreslist, 'body-admin');

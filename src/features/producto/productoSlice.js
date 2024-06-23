@@ -145,6 +145,7 @@ export const productoSlice = createSlice({
         state.productName = action.payload.nombre;
         state.productDescription = action.payload.descripcion;
         state.productCant = action.payload.cantidad_disponible;
+        state.productCantMin = action.payload.cantidad_minima;
         state.productUbicacion = action.payload.ubicacion;
         state.productPrice = action.payload.precio;
         state.productCategory = action.payload.categoria;

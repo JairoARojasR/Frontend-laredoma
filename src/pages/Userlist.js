@@ -43,15 +43,6 @@ const columns = [
     },
 
     {
-        title: "Rol",
-        dataIndex: "rol",
-    },
-
-    {
-        title: "Estado",
-        dataIndex: "estado",
-    },
-    {
         title: "Acciones",
         dataIndex: "action",
     },

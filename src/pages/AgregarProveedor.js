@@ -78,17 +78,17 @@ const AgregarProveedor = () => {
     }
     if (isSuccess && updatedUser) {
       toast.success("Proveedor actualizado exitosamente!");
-      //navigate("/admin/lista-vendedores");
+      navigate("/admin/lista-proveedores");
     }
     if (isError && message === "ERROR PERMISOS") {
       toast.error("Error no tienes permisos necesarios para realizar esta acción");
       return;
     }
     if (isError && !isExisting) {
-      toast.error("Algo salió mal al agregar el Proveedor!");
+      toast.error("Verifica Por favor el número de cédula ya existe en otro Proveedor");
     }
     if (isExisting) {
-      toast.error("¡El Proveedor ya existe!");
+      toast.error("¡El Proveedor ya existe, Por favor verifica la cédula!");
       console.log(message);
     }
   }, [isSuccess, isError, isLoading, createdUser, updatedUser, isExisting]);

@@ -1,141 +1,156 @@
-.dropzone{
-    text-align: center;
-    padding: 30px;
-    border: 2px dashed #00000054;
-    border-radius: 25px;
-    font-size: medium;
-    background-color: #ffffff;
-    transition: 0.2s;
-    cursor: pointer;
-    width: 120px;
-    height: 120px;
+.dropzone {
+  text-align: center;
+  padding: 30px;
+  border: 2px dashed #00000054;
+  border-radius: 25px;
+  font-size: medium;
+  background-color: #ffffff;
+  transition: 0.2s;
+  cursor: pointer;
+  width: 120px;
+  height: 120px;
 }
 
-.dropzone:hover{
-    background-color: #e2e2e2;
-    transition: 0.2s;
+.dropzone:hover {
+  background-color: #e2e2e2;
+  transition: 0.2s;
 }
 
-.dropzone p{
-    margin: 0;
+.dropzone p {
+  margin: 0;
 }
 
-  .dropzone-container .dropzone {
-    margin-top: 10px; 
-  }
-
-
-.variacion_button{
-    padding: 7px;
-    border: 1px double #00000061;
-    max-width: max-content;
-    border-radius: 10px;
-    text-align: center;
-    align-items: center;
-    align-self: center;
-    transition: 0.2s;
-    
+.dropzone-container .dropzone {
+  margin-top: 10px;
 }
 
-.variacion_button:hover{
-    background: #e2e2e2;
-    transition: 0.2s;
-    transform: scale(1.1);
+.variacion_button {
+  padding: 7px;
+  border: 1px double #00000061;
+  max-width: max-content;
+  border-radius: 10px;
+  text-align: center;
+  align-items: center;
+  align-self: center;
+  transition: 0.2s;
 }
 
-.variacion_button:active{
-    background: #ffffff;
-    transition: 0.2s;
-    transform: scale(0.98);
+.variacion_button:hover {
+  background: #e2e2e2;
+  transition: 0.2s;
+  transform: scale(1.1);
 }
 
-.variation_div img{
-    width: 120px;
-    height: 120px;
-    border-radius: 25px;
-    transition: 0.3s;
+.variacion_button:active {
+  background: #ffffff;
+  transition: 0.2s;
+  transform: scale(0.98);
 }
 
+.variation_div img {
+  width: 120px;
+  height: 120px;
+  border-radius: 25px;
+  transition: 0.3s;
+}
 
 .image-container {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-  
-  .image-container img {
-    max-width: 120px;
-    max-height: 120px; 
-    border-radius: 25px; 
-    transition: 0.3s;
-    border: 2px dashed #00000054;
-  }
-  
-.form_section{
-    display: grid;
-    grid-template-columns: 50% 50%;
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
 }
 
-.form_data, .form_color{
-    margin-right: 10px;
+.image-container img {
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 25px;
+  transition: 0.3s;
+  border: 2px dashed #00000054;
 }
 
-.form_description, .form_talla{
-    margin-left: 10px;
+.form_section {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: inherit;
 }
 
-.formulario_productos label{
-    font-weight: 500;
-    font-size: medium;
-    margin: 13px 0;
-    background-color: #e7e9fe;
-    padding: 2px 10px;
-    border-radius: 15px;
+.form_section2 {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: inherit;
 }
 
-.variation_div{
-    background-color: whitesmoke;
-    border-radius: 15px;
-    padding: 5px 15px;
+.form_section3 {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: inherit;
 }
 
-.tallas_div_count{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+.labeled-button{
+  display: flex;
+  align-items: center;
 }
 
-.discounts input{
-    margin: 10px 0 ;
+.form_data,
+.form_color {
+  margin-right: 10px;
+}
+
+.form_description,
+.form_talla {
+  margin-left: 10px;
+}
+
+.formulario_productos label {
+  font-weight: 500;
+  font-size: medium;
+  margin: 10px 0;
+  padding: 2px 5px;
+}
+
+.discounts input {
+  margin: 10px 0;
 }
 
 .btn_delete {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: #fff;
-    border: none;
-    border-radius: 50%; 
-    padding: 5px;
-    width: 30px; 
-    height: 30px; 
-    cursor: pointer;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-    .btn_delete:hover {
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
-  }
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #fff;
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-.max_min{
-    display: flex;
+.btn_delete:hover {
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+
+.max_min {
+  display: flex;
 }
 
 .max_min section {
-    margin-right: 40px; 
+  margin-right: 40px;
+}
+
+.gridforms{
+  display: grid;
+  column-gap: 50px;
+}
+
+.divider{
+  border: none; /* Elimina el borde predeterminado */
+  height: 1px; /* Altura de la línea */
+  background-color: black; /* Color de la línea */
+  margin: 20px 0; /* Espacio alrededor de la línea */
 }
 
 /*

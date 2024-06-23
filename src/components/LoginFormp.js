@@ -18,6 +18,8 @@ import GoogleLogin from "react-google-login";
 import { gapi } from "gapi-script";
 import * as yup from "yup";
 import { RecoveryContext } from "../App";
+import svg from "../images/tools.svg"; // Importa tu SVG aquí
+
 
 const schema2 = yup.object().shape({
   correo: yup
@@ -117,10 +119,10 @@ function LoginFormp() {
         if (existingUser) {
           dispatch(loginUser(userData));
           navigate("/admin");
+          window.location.reload(); // Recargar la página después de la redirección
           const updatedUser = await userService.getUser(userData.correo);
           if (updatedUser) {
             dispatch(loginUser(updatedUser));
-            window.location.reload();
           }
         }
       } else {
@@ -210,11 +212,8 @@ function LoginFormp() {
               </button>
             </div>
             <div className={`${styles.overlay_panel} ${styles.overlay_right}`}>
-              <img src={logo} className={styles.logomadais} alt="" />
-              <h1 className={styles.h1_alt}>Pruebita </h1>
-              <p>Pruebita</p>
-              <p>Pruebita</p>
-            </div>
+  <img src={svg} className={styles.yourSvgClass} alt="Descripción del SVG" /> 
+</div>
           </div>
         </div>
       </div>

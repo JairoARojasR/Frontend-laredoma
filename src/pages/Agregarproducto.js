@@ -45,6 +45,14 @@ const schema = yup.object().shape({
     .number()
     .min(1, "La cantidad minima es de 1")
     .required("Las cantidades disponibles son requeridas"),
+  cantidad_minima: yup
+    .number()
+    .min(1, "La cantidad minima es de 1")
+    .required("Las cantidad minima es requerida")
+    .lessThan(
+      yup.ref("cantidad_disponible"),
+      "La cantidad mínima debe ser menor que la cantidad disponible"
+    ),
   categoria: yup.string().required("Categoría es requerido"),
 });
 
@@ -74,6 +82,7 @@ const Agregarproducto = () => {
   const [open2, setOpen2] = useState(false);
   const [open3, setOpen3] = useState(false);
   const [open4, setOpen4] = useState(false);
+  const [open5, setOpen5] = useState(false);
 
   const hide1 = () => {
     setOpen1(false);
@@ -94,6 +103,11 @@ const Agregarproducto = () => {
   const hide4 = () => {
     setOpen4(false);
   };
+
+  const hide5 = () => {
+    setOpen5(false);
+  };
+
   const handleOpenChange0 = (newOpen) => {
     setOpen0(newOpen);
   };
@@ -114,18 +128,20 @@ const Agregarproducto = () => {
     setOpen4(newOpen);
   };
 
+  const handleOpenChange5 = (newOpen) => {
+    setOpen5(newOpen);
+  };
+
   const userState = useSelector((state) => state.user.users);
   const marcaState = useSelector((state) => state.marcaauto.marcas);
   const catState = useSelector((state) => state.categoria.categorias);
   const imgState = useSelector((state) => state.upload.images);
 
-  
   useEffect(() => {
     dispatch(getMarcasauto());
     dispatch(getCategorias());
-   dispatch(getUsers());
+    dispatch(getUsers());
   }, [dispatch]);
-
 
   const newProduct = useSelector((state) => state.producto);
   const {
@@ -140,6 +156,7 @@ const Agregarproducto = () => {
     productDescription,
     productUbicacion,
     productCant,
+    productCantMin,
     productPrice,
     productProv,
     productImg,
@@ -156,7 +173,6 @@ const Agregarproducto = () => {
       dispatch(resetState());
     }
   }, [getProdId]);
-  
 
   useEffect(() => {
     if (productImg && productImg.length > 0) {
@@ -191,7 +207,14 @@ const Agregarproducto = () => {
         "¡El producto ya existe por favor verifica la referencia o el nombre.!"
       );
     }
-  }, [isSuccess, isError, isLoading, isExisting, createdProduct, updatedProduct]);
+  }, [
+    isSuccess,
+    isError,
+    isLoading,
+    isExisting,
+    createdProduct,
+    updatedProduct,
+  ]);
 
   const img = [];
   imgState.forEach((i) => {
@@ -207,6 +230,7 @@ const Agregarproducto = () => {
       nombre: productName || "",
       descripcion: productDescription || "",
       cantidad_disponible: productCant || "",
+      cantidad_minima: productCantMin || "",
       ubicacion: productUbicacion || "",
       precio: productPrice || "",
       categoria: productCategory || "",
@@ -235,11 +259,11 @@ const Agregarproducto = () => {
 
   const handleImageChange = async (files) => {
     setIsUploading(true);
-  
+
     try {
       const newImages = [];
       const uploadedImage = await dispatch(uploadImg(files));
-  
+
       if (Array.isArray(uploadedImage.payload)) {
         uploadedImage.payload.forEach((image) => {
           const imageInfo = {
@@ -248,7 +272,7 @@ const Agregarproducto = () => {
           };
           newImages.push(imageInfo);
         });
-  
+
         // Agregar las nuevas imágenes al estado existentes
         setImagenes((prevImages) => {
           const updatedImages = [...prevImages, ...newImages];
@@ -287,7 +311,6 @@ const Agregarproducto = () => {
     <div className="formulario_productos">
       <h3 className="mb-4  title">
         {getProdId !== undefined ? "Editar" : "Agregar"} Producto
-        {console.log("formik", formik.values)}
       </h3>
 
       <div>
@@ -295,283 +318,314 @@ const Agregarproducto = () => {
           onSubmit={formik.handleSubmit}
           className="d-flex gap-3 flex-column"
         >
-          <section className="form_section">
-            <div className="form_data">
-              {/* NOMBRE */}
+          <section className="form_section3">
+            <div className="columna1">
+              <div className="form_section" style={{ gap: "15px" }}>
+                <div className="columna1">
+                  {/* NOMBRE */}
+                  <div className="labeled-button">
+                    <label>Nombre del Producto</label>
+                    <Popover
+                      content={<a onClick={hide1}>Cerrar</a>}
+                      title="Por favor, elige un nombre que no siendo utilizado en otro producto"
+                      trigger="click"
+                      open={open1}
+                      onOpenChange={handleOpenChange1}
+                    >
+                      <Button type="primary" shape="circle" size="small">
+                        ?
+                      </Button>
+                    </Popover>
+                  </div>
+                  <CustomInput
+                    type="text"
+                    label="Ingrese el nombre del producto"
+                    onChng={(e) => {
+                      const formattedValue = normalizeAndCapitalize(
+                        e.target.value
+                      );
+                      formik.handleChange("nombre")({
+                        target: { value: formattedValue },
+                      });
+                    }}
+                    onBlr={formik.handleBlur("nombre")}
+                    val={formik.values.nombre}
+                  />
+                  <div className="error">
+                    {formik.touched.nombre && formik.errors.nombre}
+                  </div>
+                  {/* NOMBRE */}
 
-              <label>Nombre del Producto</label>
-              <Popover
-                content={<a onClick={hide1}>Cerrar</a>}
-                title="Por favor, elige un nombre que no siendo utilizado en otro producto"
-                trigger="click"
-                open={open1}
-                onOpenChange={handleOpenChange1}
-              >
-                <Button type="primary" style={{ borderRadius: "50%" }}>
-                  ?
-                </Button>
-              </Popover>
-              <CustomInput
-                type="text"
-                label="Ingrese el nombre del producto"
-                onChng={(e) => {
-                  const formattedValue = normalizeAndCapitalize(e.target.value);
-                  formik.handleChange("nombre")({
-                    target: { value: formattedValue },
-                  });
-                }}
-                onBlr={formik.handleBlur("nombre")}
-                val={formik.values.nombre}
-              />
-              <div className="error">
-                {formik.touched.nombre && formik.errors.nombre}
-              </div>
-
-              {/* NOMBRE */}
-
-              {/* UBICACION */}
-              <label>Ubicación en el Producto</label>
-              <Popover
-                content={<a onClick={hide0}>Cerrar</a>}
-                title="Por favor, verifica el código de estante antes de ingresarlo"
-                trigger="click"
-                open={open0}
-                onOpenChange={handleOpenChange0}
-              >
-                <Button type="primary" style={{ borderRadius: "50%" }}>
-                  ?
-                </Button>
-              </Popover>
-              <CustomInput
-                type="text"
-                label="Ingrese el código del estante"
-                onChng={(e) => {
-                  const formattedValue = normalizeAndCapitalize(e.target.value);
-                  formik.handleChange("ubicacion")({
-                    target: { value: formattedValue },
-                  });
-                }}
-                onBlr={formik.handleBlur("ubicacion")}
-                val={formik.values.ubicacion}
-              />
-              <div className="error">
-                {formik.touched.ubicacion && formik.errors.ubicacion}
-              </div>
-              {/* UBICACION */}
-
-              {/* REFERENCIA */}
-              <label>Referencia del Producto</label>
-              <Popover
-                content={<a onClick={hide2}>Cerrar</a>}
-                title="Por favor, elige una referencia que no siendo utilizada en otro producto"
-                trigger="click"
-                open={open2}
-                onOpenChange={handleOpenChange2}
-              >
-                <Button type="primary" style={{ borderRadius: "50%" }}>
-                  ?
-                </Button>
-              </Popover>
-              <CustomInput
-                type="number"
-                label="Ingrese la referencia del producto"
-                onChng={(e) => {
-                  formik.handleChange("referencia")(e);
-                }}
-                onBlr={formik.handleBlur("referencia")}
-                val={formik.values.referencia}
-              />
-              <div className="error">
-                {formik.touched.referencia && formik.errors.referencia}
-              </div>
-              {/* REFERENCIA */}
-
-              {/* CANTIDAD DISPONIBLE */}
-              <label>Cantidad Disponible del producto</label>
-              <CustomInput
-                type="number"
-                label="Ingrese la cantidad disponible del producto"
-                name="price"
-                onChng={formik.handleChange("cantidad_disponible")}
-                onBlr={formik.handleBlur("cantidad_disponible")}
-                val={formik.values.cantidad_disponible}
-              />
-              <div className="error">
-                {formik.touched.cantidad_disponible &&
-                  formik.errors.cantidad_disponible}
-              </div>
-              {/* CANTIDAD DISPONIBLE */}
-
-              {/* PRECIO DEL PRODUCTO */}
-              <label>Precio del producto</label>
-              <CustomInput
-                type="number"
-                label="Ingrese el precio del producto"
-                name="price"
-                onChng={formik.handleChange("precio")}
-                onBlr={formik.handleBlur("precio")}
-                val={formik.values.precio}
-              />
-              <div className="error">
-                {formik.touched.precio && formik.errors.precio}
-              </div>
-              {/* PRECIO DEL PRODUCTO */}
-
-              {/* CATEGORIA */}
-              <label>Categoria del producto</label>
-              <Popover
-                content={<a onClick={hide3}>Cerrar</a>}
-                title="Por favor seleccione una de las siguientes categorias registradas"
-                trigger="click"
-                open={open3}
-                onOpenChange={handleOpenChange3}
-              >
-                <Button type="primary" style={{ borderRadius: "50%" }}>
-                  ?
-                </Button>
-              </Popover>
-
-              <Select
-                showSearch
-                value={formik.values.categoria}
-                onChange={(value) => {
-                  formik.setFieldValue("categoria", value);
-                }}
-                onBlur={formik.handleBlur("categoria")}
-                style={{ width: "100%" }}
-                optionFilterProp="value"
-                filterOption={(input, option) =>
-                  option.value.toLowerCase().indexOf(input.toLowerCase()) >=
-                    0 ||
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                    0
-                }
-              >
-                <Option value="">Seleccione una categoría</Option>
-                {catState.map((i, j) => (
-                  <Option key={j} value={i._id} disabled={!i.activo}>
-                    {i.nombre}
-                  </Option>
-                ))}
-              </Select>
-              <div className="error">
-                {formik.touched.categoria && formik.errors.categoria}
-              </div>
-              {/* CATEGORIA */}
-
-              {/* PROVEEDORES */}
-              <label>Proveedores</label>
-              <Popover
-                content={<a onClick={hide3}>Cerrar</a>}
-                title="Por favor seleccione los proveedores del producto"
-                trigger="click"
-                open={open3}
-                onOpenChange={handleOpenChange3}
-              >
-                <Button type="primary" style={{ borderRadius: "50%" }}>
-                  ?
-                </Button>
-              </Popover>
-
-              <Select
-                mode="multiple"
-                placeholder="Seleccione un proveedor"
-                showSearch
-                value={formik.values.proveedores}
-                onChange={(value) => {
-                  formik.setFieldValue("proveedores", value);
-                }}
-                onBlur={formik.handleBlur("proveedores")}
-                style={{ width: "100%" }}
-                optionFilterProp="value"
-                filterOption={(input, option) =>
-                  option.value.toLowerCase().indexOf(input.toLowerCase()) >=
-                    0 ||
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                    0
-                }
-              >
-                {userState.map((user) => {
-                  if (user.id_rol === "6667c97dbb2265c8a8eba941") {
-                    return (
-                      <Option
-                        key={user._id}
-                        value={user._id}
-                        disabled={!user.activo}
-                      >
-                        {user.nombre}
+                  {/* CANTIDAD MINIMA */}
+                  <label>Cantidad minima del producto</label>
+                  <CustomInput
+                    type="number"
+                    label="Ingrese la cantidad minima del producto"
+                    name="price"
+                    onChng={formik.handleChange("cantidad_minima")}
+                    onBlr={formik.handleBlur("cantidad_minima")}
+                    val={formik.values.cantidad_minima}
+                  />
+                  <div className="error">
+                    {formik.touched.cantidad_minima &&
+                      formik.errors.cantidad_minima}
+                  </div>
+                  {/* CANTIDAD MINIMA */}
+                  {/* CATEGORIA */}
+                  <div className="labeled-button">
+                    <label>Categoria del producto</label>
+                    <Popover
+                      content={<a onClick={hide3}>Cerrar</a>}
+                      title="Por favor seleccione una de las siguientes categorias registradas"
+                      trigger="click"
+                      open={open3}
+                      onOpenChange={handleOpenChange3}
+                    >
+                      <Button type="primary" shape="circle" size="small">
+                        ?
+                      </Button>
+                    </Popover>
+                  </div>
+                  <Select
+                    showSearch
+                    value={formik.values.categoria}
+                    onChange={(value) => {
+                      formik.setFieldValue("categoria", value);
+                    }}
+                    onBlur={formik.handleBlur("categoria")}
+                    style={{ width: "100%" }}
+                    optionFilterProp="value"
+                    filterOption={(input, option) =>
+                      option.value.toLowerCase().indexOf(input.toLowerCase()) >=
+                        0 ||
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    <Option value="">Seleccione una categoría</Option>
+                    {catState.map((i, j) => (
+                      <Option key={j} value={i._id} disabled={!i.activo}>
+                        {i.nombre}
                       </Option>
-                    );
-                  } else {
-                    return null; 
-                  }
-                })}
-              </Select>
-              <div className="error">
-                {formik.touched.proveedores && formik.errors.proveedores}
+                    ))}
+                  </Select>
+                  <div className="error">
+                    {formik.touched.categoria && formik.errors.categoria}
+                  </div>
+                  {/* CATEGORIA */}
+                  {/* MARCA AUTO */}
+                  <div className="labeled-button">
+                    <label>Marca de auto del producto</label>
+                    <Popover
+                      content={<a onClick={hide4}>Cerrar</a>}
+                      title="Por favor seleccione una de las siguiente marca de autos especialmente si el producto a agregar es un repuesto o exclusivo de una marca"
+                      trigger="click"
+                      open={open4}
+                      onOpenChange={handleOpenChange4}
+                    >
+                      <Button type="primary" shape="circle" size="small">
+                        ?
+                      </Button>
+                    </Popover>
+                  </div>
+                  <Select
+                    mode="multiple"
+                    placeholder="Seleccione una marca de auto"
+                    showSearch
+                    value={formik.values.marca_auto}
+                    onChange={(value) => {
+                      formik.setFieldValue("marca_auto", value);
+                    }}
+                    onBlur={formik.handleBlur("marca_auto")}
+                    style={{ width: "100%" }}
+                    optionFilterProp="value"
+                    filterOption={(input, option) =>
+                      option.value.toLowerCase().indexOf(input.toLowerCase()) >=
+                        0 ||
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {marcaState.map((i, j) => (
+                      <Option key={j} value={i._id} disabled={!i.activo}>
+                        {i.nombre}
+                      </Option>
+                    ))}
+                  </Select>
+
+                  <div className="error">
+                    {formik.touched.marca_auto && formik.errors.marca_auto}
+                  </div>
+                  {/* MARCA AUTO */}
+                  {/* PRECIO DEL PRODUCTO */}
+                  <label>Precio del producto</label>
+                  <CustomInput
+                    type="number"
+                    label="Ingrese el precio del producto"
+                    name="price"
+                    onChng={formik.handleChange("precio")}
+                    onBlr={formik.handleBlur("precio")}
+                    val={formik.values.precio}
+                  />
+                  <div className="error">
+                    {formik.touched.precio && formik.errors.precio}
+                  </div>
+                  {/* PRECIO DEL PRODUCTO */}
+                </div>
+                <div className="columna2">
+                  {/* REFERENCIA */}
+                  <div className="labeled-button">
+                    <label>Referencia del Producto</label>
+                    <Popover
+                      content={<a onClick={hide2}>Cerrar</a>}
+                      title="Por favor, elige una referencia que no siendo utilizada en otro producto"
+                      trigger="click"
+                      open={open2}
+                      onOpenChange={handleOpenChange2}
+                    >
+                      <Button type="primary" shape="circle" size="small">
+                        ?
+                      </Button>
+                    </Popover>
+                  </div>
+                  <CustomInput
+                    type="number"
+                    label="Ingrese la referencia del producto"
+                    onChng={(e) => {
+                      formik.handleChange("referencia")(e);
+                    }}
+                    onBlr={formik.handleBlur("referencia")}
+                    val={formik.values.referencia}
+                  />
+                  <div className="error">
+                    {formik.touched.referencia && formik.errors.referencia}
+                  </div>
+                  {/* REFERENCIA */}
+                  {/* CANTIDAD DISPONIBLE */}
+                  <label>Cantidad Disponible del producto</label>
+                  <CustomInput
+                    type="number"
+                    label="Ingrese la cantidad disponible del producto"
+                    name="price"
+                    onChng={formik.handleChange("cantidad_disponible")}
+                    onBlr={formik.handleBlur("cantidad_disponible")}
+                    val={formik.values.cantidad_disponible}
+                  />
+                  <div className="error">
+                    {formik.touched.cantidad_disponible &&
+                      formik.errors.cantidad_disponible}
+                  </div>
+                  {/* CANTIDAD DISPONIBLE */}
+                  {/* UBICACION */}
+                  <div className="labeled-button">
+                    <label>Ubicación en el Producto</label>
+                    <Popover
+                      content={<a onClick={hide0}>Cerrar</a>}
+                      title="Por favor, verifica el código de estante antes de ingresarlo"
+                      trigger="click"
+                      open={open0}
+                      onOpenChange={handleOpenChange0}
+                    >
+                      <Button type="primary" shape="circle" size="small">
+                        ?
+                      </Button>
+                    </Popover>
+                  </div>
+                  <CustomInput
+                    type="text"
+                    label="Ingrese el código del estante"
+                    onChng={(e) => {
+                      const formattedValue = normalizeAndCapitalize(
+                        e.target.value
+                      );
+                      formik.handleChange("ubicacion")({
+                        target: { value: formattedValue },
+                      });
+                    }}
+                    onBlr={formik.handleBlur("ubicacion")}
+                    val={formik.values.ubicacion}
+                  />
+                  <div className="error">
+                    {formik.touched.ubicacion && formik.errors.ubicacion}
+                  </div>
+                  {/* UBICACION */}
+                  {/* PROVEEDORES */}
+                  <div className="labeled-button">
+                    <label>Proveedores</label>
+                    <Popover
+                      content={<a onClick={hide5}>Cerrar</a>}
+                      title="Por favor seleccione los proveedores del producto"
+                      trigger="click"
+                      open={open5}
+                      onOpenChange={handleOpenChange5}
+                    >
+                      <Button type="primary" shape="circle" size="small">
+                        ?
+                      </Button>
+                    </Popover>
+                  </div>
+                  <Select
+                    mode="multiple"
+                    placeholder="Seleccione un proveedor"
+                    showSearch
+                    value={formik.values.proveedores}
+                    onChange={(value) => {
+                      formik.setFieldValue("proveedores", value);
+                    }}
+                    onBlur={formik.handleBlur("proveedores")}
+                    style={{ width: "100%" }}
+                    optionFilterProp="value"
+                    filterOption={(input, option) =>
+                      option.value.toLowerCase().indexOf(input.toLowerCase()) >=
+                        0 ||
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {userState.map((user) => {
+                      if (user.id_rol === "6667c97dbb2265c8a8eba941") {
+                        return (
+                          <Option
+                            key={user._id}
+                            value={user._id}
+                            disabled={!user.activo}
+                          >
+                            {user.nombre}
+                          </Option>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+                  </Select>
+                  <div className="error">
+                    {formik.touched.proveedores && formik.errors.proveedores}
+                  </div>
+                  {/* PROVEEDORES */}
+                </div>
               </div>
-              {/* PROVEEDORES */}
-
-              {/* MARCA AUTO */}
-              <label>Marca de auto del producto</label>
-              <Popover
-                content={<a onClick={hide4}>Cerrar</a>}
-                title="Por favor seleccione una de las siguiente marca de autos especialmente si el producto a agregar es un repuesto o exclusivo de una marca"
-                trigger="click"
-                open={open4}
-                onOpenChange={handleOpenChange4}
-              >
-                <Button type="primary" style={{ borderRadius: "50%" }}>
-                  ?
-                </Button>
-              </Popover>
-
-              <Select
-                mode="multiple"
-                placeholder="Seleccione una marca de auto"
-                showSearch
-                value={formik.values.marca_auto}
-                onChange={(value) => {
-                  formik.setFieldValue("marca_auto", value);
-                }}
-                onBlur={formik.handleBlur("marca_auto")}
-                style={{ width: "100%" }}
-                optionFilterProp="value"
-                filterOption={(input, option) =>
-                  option.value.toLowerCase().indexOf(input.toLowerCase()) >=
-                    0 ||
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                    0
-                }
-              >
-                {marcaState.map((i, j) => (
-                  <Option key={j} value={i._id} disabled={!i.activo}>
-                    {i.nombre}
-                  </Option>
-                ))}
-              </Select>
-
-              <div className="error">
-                {formik.touched.marca_auto && formik.errors.marca_auto}
-              </div>
-              {/* MARCA AUTO */}
             </div>
-            <div className="form_description">
-              {/* DESCRIPCION */}
-              <label>Descripción del producto</label>
-              <div>
-                <ReactQuill
-                  theme="snow"
-                  name="description"
-                  onChange={formik.handleChange("descripcion")}
-                  value={formik.values.descripcion}
-                  placeholder="Escribe la descripción del producto aquí"
-                />
+            <div className="columna2">
+              <div className="form_description">
+                {/* DESCRIPCION */}
+                <label>Descripción del producto</label>
+                <div>
+                  <ReactQuill
+                    theme="snow"
+                    name="description"
+                    onChange={formik.handleChange("descripcion")}
+                    value={formik.values.descripcion}
+                    placeholder="Escribe la descripción del producto aquí"
+                  />
+                </div>
+                <div className="error">
+                  {formik.touched.descripcion && formik.errors.descripcion}
+                </div>
+                {/* DESCRIPCION */}
               </div>
-              <div className="error">
-                {formik.touched.descripcion && formik.errors.descripcion}
-              </div>
-              {/* DESCRIPCION */}
             </div>
           </section>
 
@@ -653,4 +707,4 @@ const Agregarproducto = () => {
   );
 };
 
-export default withBodyClass(Agregarproducto, 'body-admin');
+export default withBodyClass(Agregarproducto, "body-admin");

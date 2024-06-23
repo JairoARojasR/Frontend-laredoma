@@ -139,35 +139,41 @@ const Categorylist = () => {
     try {
       const row = await form.validateFields();
       const resultAction = await dispatch(updateCategoria({ id: key, pCatData: row }));
-      const result = unwrapResult(resultAction);
-
       setEditingKey('');
       if (resultAction.type.endsWith('fulfilled')) {
         toast.success('Categoria actualizada exitosamente!');
-      } 
+      }
       dispatch(getCategorias());
     } catch (errInfo) {
       toast.error("La Categoria ya existe")
     }
   };
 
+
   const handleOk = async () => {
-    if (!newCategoriaName.trim()) {
-      toast.error("El nombre de la Categoria no puede estar vacío.");
-      return;
-    }
-    
-    try {
-      await dispatch(createCategoria({ nombre: newCategoriaName }));
+  if (!newCategoriaName.trim()) {
+    toast.error("El nombre de la Categoria no puede estar vacío.");
+    return;
+  }
+
+  try {
+    const resultAction = await dispatch(createCategoria({ nombre: newCategoriaName }));
+    if (resultAction.type.endsWith('fulfilled')) {
       setIsModalOpen(false);
       setNewCategoriaName("");
       dispatch(getCategorias()); // Refresh the data after adding
       toast.success('Categoria agregada exitosamente!');
-    } catch (error) {
-      console.error("Error al agregar la Categoria:", error);
-      toast.error("Error al agregar la Categoria.");
+    } else {
+      throw new Error("Unknown error");
     }
-  };
+  } catch (error) {
+    if (error.message.includes("already exists")) {
+      toast.error("La Categoria ya existe");
+    } else {
+      toast.error("La Categoria ya existe");
+    }
+  }
+};
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -240,11 +246,11 @@ const Categorylist = () => {
         await dispatch(deleteCategoria(categoryId));
         setOpen(false);
         dispatch(getCategorias());
-        toast.success("Marca de auto eliminada exitosamente!");
+        toast.success("Categoría eliminada exitosamente!");
       }
     } catch (error) {
-      console.error("Error al intentar eliminar la marca de auto:", error);
-      toast.error("Error al intentar eliminar la marca de auto.");
+      console.error("Error al intentar eliminar la categoría:", error);
+      toast.error("Error al intentar eliminar la categoría.");
     }
   };
 
@@ -268,7 +274,7 @@ const Categorylist = () => {
         hideModal={hideModal}
         open={open}
         performAction={() => handledeleteCategory(pCatId)}
-        title="¿Estás seguro de que quieres eliminar la marca de auto?"
+        title="¿Estás seguro de que quieres eliminar la categoría?"
       />
       <Modal
         title="Agregar Categoria"

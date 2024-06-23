@@ -99,12 +99,12 @@ const updateUser = async (user) => {//listo
   const response = await axios.put(
     `${base_url}persona/${user.id}`,
     {
-
       nombre: user.userData.nombre,
+      cedula: user.userData.cedula,
       correo: user.userData.correo,
-      //rol: user.userData.rol,
       id_rol: user.userData.id_rol,
       ubicacion: user.userData.ubicacion,
+      direccion: user.userData.direccion,
       telefono: user.userData.telefono,
       code: user.userData.code,
       activo: user.userData.activo,
@@ -117,7 +117,7 @@ const updateUser = async (user) => {//listo
 
 const updateUserByEmail = async (user) => {//listo
   const response = await axios.put(
-    `${base_url}persona/actualizar-datos/${user.userData.correo}`,
+    `${base_url}persona/actualizar-datos/${user.userData.correobus}`,
     {
       nombre: user.userData.nombre,
       correo: user.userData.correo,
@@ -126,6 +126,9 @@ const updateUserByEmail = async (user) => {//listo
     },
     config
   );
+  console.log("user", user);
+  config.headers.Authorization="Bearer " + response.data.token;
+  localStorage.setItem("user", JSON.stringify(response.data));
   return response.data;
 };
 

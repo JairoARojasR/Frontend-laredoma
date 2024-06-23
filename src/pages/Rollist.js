@@ -5,13 +5,13 @@ import { AiFillDelete } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import {getVentas} from "../features/venta/ventaSlice";
-import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
-import servicioService from "../features/serviciosmantrep/serviciosmantrepService";
+import {EditOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import rolService from "../features/rol/rolService";
 import productService from "../features/producto/productoService";
-import { createServiciomantrep, deleteServiciomantrep, getServiciosmantrep, resetState, updateServiciomantrep } from "../features/serviciosmantrep/serviciosmantrepSlice";
+import { createRol, deleteRol, getRol,getRoles, resetState, updateRol } from "../features/rol/rolSlice";
 import CustomModal from "../components/CustomModal";
 import { unwrapResult } from '@reduxjs/toolkit';
+import {getUsers} from "../features/usuario/usuarioSlice";
 
 const EditableCell = ({
   editing,
@@ -42,110 +42,68 @@ const EditableCell = ({
 };
 
 
-const Serviciosmantreplist = () => {
+const Categorylist = () => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newServicioName, setNewServicioName] = useState("");
   const [pCatId, setpCatId] = useState("");
+  const [newRolName, setNewRolName] = useState("");
   const dispatch = useDispatch();
-  const ventaState = useSelector((state) => state.venta.ventas);
-
+  const userState = useSelector((state) => state.user.users)
   const showModal = (categoryId) => {
     setOpen(true);
     setpCatId(categoryId);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleOk = async () => {
-    if (!newServicioName.trim()) {
-      toast.error("El nombre del servicio no puede estar vacío.");
-      return;
-    }
-
-    try {
-      const resultAction = await dispatch(createServiciomantrep({ nombre: newServicioName }));
-      if (resultAction.type.endsWith('fulfilled')) {
-      setIsModalOpen(false);
-      setNewServicioName("");
-      dispatch(getServiciosmantrep()); // Refresh the data after adding 
-      toast.success('Servicio de mantenimiento exitosamente!');
-    } else {
-      throw new Error("Unknown error");
-    }
-  } catch (error) {
-    if (error.message.includes("already exists")) {
-      toast.error("El servicio ya existe");
-    } else {
-      toast.error("El servicio ya existe");
-    }
-  }
-};
   const hideModal = () => {
     setOpen(false);
   };
 
-  const handleSwitchChange = async (servicioId, property, checked) => {
+  const handleSwitchChange = async (categoryId, property, checked) => {
     try {
-      await servicioService.updateServiciosmantrep({
-        id: servicioId,
+      await rolService.updateRol({
+        id: categoryId,
         pCatData: {
           [property]: checked,
         },
       });
-      dispatch(getServiciosmantrep());
+      dispatch(getRoles());
+
       const message = checked
-        ? `El servicio de mantenimiento-reparación está ${property} actualmente`
-        : `El servicio de mantenimiento-reparación no está ${property} actualmente`;
+        ? `La categoría está ${property} actualmente`
+        : `La categoría no está ${property} actualmente`;
 
       toast.success(message);
     } catch (error) {
-      const errorMessage = `Error al cambiar el estado de ${property} del servicio de mantenimiento-reparación`;
+      const errorMessage = `Error al cambiar el estado de ${property} del rol`;
       toast.error(errorMessage);
     }
   };
 
   useEffect(() => {
     dispatch(resetState());
-    dispatch(getServiciosmantrep());
-    dispatch(getVentas());
+    dispatch(getRoles());
+    dispatch(getUsers());
   }, [dispatch]);
 
-
-  const save = async (key) => {
-    try {
-      const row = await form.validateFields();
-      // Dispatch update action and unwrap result
-      const resultAction = await dispatch(updateServiciomantrep({ id: key, pCatData: row }));
-      const result = unwrapResult(resultAction);
-
-      setEditingKey('');
-
-      if (resultAction.type.endsWith('fulfilled')) {
-        toast.success('Servicio actualizado exitosamente!');
-      } 
-      dispatch(getServiciosmantrep());
-    } catch (errInfo) {
-      toast.error("El Servicio ya existe")
-    }
-  };
-
-  const servicios = useSelector((state) => state.serviciosmantrep.servicios);
-  const data = servicios.map((servicio, index) => ({
-    key: servicio._id,
-    nombre: servicio.nombre,
+  const roles = useSelector((state) => state.rol.roles);
+  const data = roles.map((rol, index) => ({
+    key: rol._id,
+    // nombre: (
+    //   <Link to={`/admin/categoria/${categoria.nombre}/productos`}>
+    //     {categoria.nombre}
+    //   </Link>
+    // ),
+    nombre: rol.nombre,
     estado: (
       <Space direction="vertical">
         <Switch
           checkedChildren={<CheckOutlined />}
           unCheckedChildren={<CloseOutlined />}
-          defaultChecked={servicio.activo}
+          defaultChecked={rol.activo}
           onChange={(checked) =>
-            handleSwitchChange(servicio._id, "activo", checked)
+            handleSwitchChange(rol._id, "activo", checked)
           }
         />
       </Space>
@@ -153,14 +111,14 @@ const Serviciosmantreplist = () => {
     action: (
       <>
         <Link
-          to={`/admin/categoria/${servicio._id}`}
+          to={`/admin/rol/${rol._id}`}
           className=" fs-3 text-danger"
         >
           <BiEdit />
         </Link>
         <button
           className="ms-3 fs-3 text-danger bg-transparent border-0"
-          onClick={() => showModal(servicio._id)}
+          onClick={() => showModal(rol._id)}
         >
           <AiFillDelete />
         </button>
@@ -179,26 +137,42 @@ const Serviciosmantreplist = () => {
     setEditingKey('');
   };
 
-  const handledeleteServicios = async (servicioId) => {
+  const save = async (key) => {
     try {
-    const serviciosPrestados = ventaState.flatMap(venta => venta.servicios_prestados);
-    const serviciosAsociados = serviciosPrestados.filter(servicio => servicio.id_servicio === servicioId);
+      const row = await form.validateFields();
+      const resultAction = await dispatch(updateRol({ id: key, pCatData: row }));
+      const result = unwrapResult(resultAction);
 
-    if (serviciosAsociados.length > 0) {
-      toast.error(
-        `No se puede eliminar el servicio porque está asociado a ${serviciosAsociados.length} servicios prestados en ventas.`
-      );
-      return;
-      } else {
-        await dispatch(deleteServiciomantrep(servicioId));
-        setOpen(false);
-        dispatch(getServiciosmantrep());
-        toast.success("Servicio eliminado exitosamente!");
-      }
-    } catch (error) {
-      console.error("Error al intentar eliminar el servicio:", error);
-      toast.error("Error al intentar eliminar el servicio.");
+      setEditingKey('');
+      if (resultAction.type.endsWith('fulfilled')) {
+        toast.success('Rol actualizado exitosamente!');
+      } 
+      dispatch(getRoles());
+    } catch (errInfo) {
+      toast.error("El Rol ya existe")
     }
+  };
+
+  const handleOk = async () => {
+    if (!newRolName.trim()) {
+      toast.error("El nombre del rol no puede estar vacío.");
+      return;
+    }
+    
+    try {
+      await dispatch(createRol({ nombre: newRolName }));
+      setIsModalOpen(false);
+      setNewRolName("");
+      dispatch(getRoles()); // Refresh the data after adding
+      toast.success('Rol agregado exitosamente!');
+    } catch (error) {
+      console.error("Error al agregar el rol:", error);
+      toast.error("Error al agregar el rol.");
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   const columns = [
@@ -228,17 +202,17 @@ const Serviciosmantreplist = () => {
               type="primary"
               style={{ marginRight: 8 }}
             />
-             <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteServicios(record.key)} okText="Sí" cancelText="No">
+            <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteCategory(record.key)} okText="Sí" cancelText="No">
               <button className="ms-3 fs-3 text-danger bg-transparent border-0">
                 <AiFillDelete />
               </button>
-            </Popconfirm> 
+            </Popconfirm>
           </span>
         );
       },
     },
   ];
-
+  
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -256,13 +230,33 @@ const Serviciosmantreplist = () => {
   });
 
 
+  const handledeleteCategory = async (categoryId) => {
+    try {
+      const usersWithRole = userState.filter(user => user.id_rol === categoryId);
+
+      if (usersWithRole.length > 0) {
+        toast.error(
+          `No se puede eliminar el rol porque está asociado a ${usersWithRole.length} usuarios.`
+        );
+        return;
+      } else {
+        await dispatch(deleteRol(categoryId));
+        setOpen(false);
+        dispatch(getRoles());
+        toast.success("Rol eliminada exitosamente!");
+      }
+    } catch (error) {
+      console.error("Error al intentar eliminar el rol:", error);
+      toast.error("Error al intentar eliminar el rol.");
+    }
+  };
+
   return (
     <div>
-      <h3 className="mb-4 title">Lista de Servicios</h3>
-      {console.log("venta", ventaState)}
+      <h3 className="mb-4 title">Lista de Roles</h3>
       <Button type="primary" onClick={() => setIsModalOpen(true)} style={{ marginBottom: 16 }}>
-        Agregar Servicio
-      </Button> 
+        Agregar Rol
+      </Button>
       <Form form={form} component={false}>
         <Table
           components={{ body: { cell: EditableCell } }}
@@ -276,11 +270,11 @@ const Serviciosmantreplist = () => {
       <CustomModal
         hideModal={hideModal}
         open={open}
-        performAction={() => handledeleteServicios(pCatId)}
-        title="¿Estás seguro de que quieres eliminar el servicio?"
+        performAction={() => handledeleteCategory(pCatId)}
+        title="¿Estás seguro de que quieres eliminar el rol?"
       />
-       <Modal
-        title="Agregar Servicio de Mantenimiento"
+      <Modal
+        title="Agregar Rol"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -288,12 +282,12 @@ const Serviciosmantreplist = () => {
       >
         <Form layout="vertical">
           <Form.Item label="Nombre" required>
-            <Input value={newServicioName} onChange={(e) => setNewServicioName(e.target.value)} />
+            <Input value={newRolName} onChange={(e) => setNewRolName(e.target.value)} />
           </Form.Item>
         </Form>
-      </Modal> 
+      </Modal>
     </div>
   );
 };
 
-export default Serviciosmantreplist;
+export default Categorylist;

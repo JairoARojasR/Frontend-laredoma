@@ -67,24 +67,16 @@ const Productlist = () => {
       });
       dispatch(getProducts());
 
-      let message = "";
-      if (property === "activo") {
-        message = checked
-          ? "El producto está activado actualmente"
-          : "El producto está desactivado actualmente";
-      } else if (property === "visible") {
-        message = checked
-          ? "El producto está visible actualmente"
-          : "El producto no está visible actualmente";
-      }
+      const message = checked
+        ? `El Producto está ${property} actualmente`
+        : `El Producto no está ${property} actualmente`;
 
       toast.success(message);
     } catch (error) {
-      let errorMessage = `Error al cambiar el estado de ${property} del producto`;
+      const errorMessage = `Error al cambiar el estado de ${property} del Producto`;
       toast.error(errorMessage);
     }
   };
-
   const catState = useSelector((state) => state.categoria.categorias);
   const productState = useSelector((state) => state.producto.products);
   const [data1, setData1] = useState([]);
