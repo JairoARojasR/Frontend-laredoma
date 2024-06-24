@@ -5,8 +5,7 @@ import { getAUser } from "../features/usuario/usuarioSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUsers } from "../features/usuario/usuarioSlice";
 import { getRoles } from "../features/rol/rolSlice";
-
-
+import "../styles/Botones.css"
 
 const { Title } = Typography;
 
@@ -28,13 +27,15 @@ const VerEmpleado = () => {
   };
 
   const labelStyles = {
-    fontWeight: '500',
-    fontSize: 'medium',
-    margin: '13px 0',
-    backgroundColor: '#E7E9FE',
-    padding: '2px 10px',
-    borderRadius: '15px'
-  }
+    fontWeight: "500",
+    fontSize: "medium",
+    margin: "13px 0",
+    backgroundColor: "#e6e950", 
+    color: "#0000000", 
+    boxShadow: "0 4px 10px rgba(0, 21, 41, 0.3)", 
+    padding: "2px 10px",
+    borderRadius: "15px",
+  };
 
   useEffect(() => {
     dispatch(getAUser(getUserCorreo));
@@ -113,7 +114,7 @@ const VerEmpleado = () => {
           )}
           <button
             onClick={goBack}
-            className="btn btn-success border-0 rounded-3 my-5"
+            className="boton-bonito"
           >
             Regresar
           </button>

@@ -15,7 +15,7 @@ const ButtonCustom = ({
     buttonBg,
 }) => {
 
-    const backgroundColor = danger ? 'rgb(243 46 49)' : buttonBg;
+    const backgroundColor = danger ? 'rgb(200 46 49)' : buttonBg;
 
     return (
         <Link to={action}>

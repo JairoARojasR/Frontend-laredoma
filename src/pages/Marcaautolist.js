@@ -11,7 +11,8 @@ import productService from "../features/producto/productoService";
 import { deleteMarcaauto, getMarcasauto, resetState, updateMarcaauto, createMarcaauto } from "../features/marca_auto/marcaautoSlice";
 import CustomModal from "../components/CustomModal";
 import { unwrapResult } from '@reduxjs/toolkit';
-
+import "../styles/Botones.css"
+import ButtonCustom from "../components/ButtonCustom";
 const EditableCell = ({
   editing,
   dataIndex,
@@ -223,7 +224,7 @@ const Marcaautolist = () => {
           </span>
         ) : (
           <span>
-            <Button
+            <ButtonCustom
               icon={<EditOutlined />}
               onClick={() => edit(record)}
               disabled={editingKey !== ''}
@@ -231,7 +232,7 @@ const Marcaautolist = () => {
               style={{ marginRight: 8 }}
             />
             <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteMarcaauto(record.key)} okText="Sí" cancelText="No">
-              <button className="ms-3 fs-3 text-danger bg-transparent border-0">
+              <button className="square-button">
                 <AiFillDelete />
               </button>
             </Popconfirm>

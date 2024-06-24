@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Input, Space } from "antd";
 import dayjs from "dayjs";
 import styles from "../styles/LoginFormp.module.css";
-import logo from "../images/Logo3.png";
 import {
   createUser,
   loginUser,
@@ -144,7 +143,7 @@ function LoginFormp() {
       setEmail(loginData.correo);
       localStorage.setItem("otp", OTP);
       localStorage.setItem("email", loginData.correo);
-      axios.post(`${base_url}usuario/send_recovery_email`, {
+      axios.post(`${base_url}persona/send_recovery_email`, {
         OTP,
         recipient_email: loginData.correo,
       });
@@ -204,8 +203,6 @@ function LoginFormp() {
         <div className={styles.overlay_container}>
           <div className={styles.overlay}>
             <div className={`${styles.overlay_panel} ${styles.overlay_left}`}>
-              <img src={logo} className={styles.logomadais} alt="" />
-              <h1 className={styles.h1_alt}>¡Bienvenido de vuelta!</h1>
               <p>Prueba</p>
               <button className={styles.button_blue} onClick={() => {}}>
                 Iniciar Sesión

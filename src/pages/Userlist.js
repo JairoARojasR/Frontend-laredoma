@@ -68,6 +68,7 @@ const Userlist = () => {
 
     if (userState !== null) {
         for (let i = 0; i < userState.length; i++) {
+            if (userState[i].id_rol === "666e14291f37b8e8b13ad363") {
                 data1.push({
                     key: i + 1,
                     nombre: userState[i].nombre,
@@ -77,7 +78,7 @@ const Userlist = () => {
                     estado: userState[i].estado,
                     action: (
                         <Link
-                            to={`/admin/ver-cliente/${userState[i].correo}`}
+                            to={`/admin/ver-cliente/${userState[i]._id}`}
                             className="custom-button"
                         >
                             <Tooltip title="Ver">
@@ -92,6 +93,7 @@ const Userlist = () => {
                     ),
                 });
             
+            }
         }
     }
 

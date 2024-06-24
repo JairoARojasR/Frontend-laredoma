@@ -12,6 +12,8 @@ import { createRol, deleteRol, getRol,getRoles, resetState, updateRol } from "..
 import CustomModal from "../components/CustomModal";
 import { unwrapResult } from '@reduxjs/toolkit';
 import {getUsers} from "../features/usuario/usuarioSlice";
+import "../styles/Botones.css"
+import ButtonCustom from "../components/ButtonCustom";
 
 const EditableCell = ({
   editing,
@@ -42,7 +44,7 @@ const EditableCell = ({
 };
 
 
-const Categorylist = () => {
+const Rollist = () => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   const [open, setOpen] = useState(false);
@@ -195,7 +197,7 @@ const Categorylist = () => {
           </span>
         ) : (
           <span>
-            <Button
+            <ButtonCustom
               icon={<EditOutlined />}
               onClick={() => edit(record)}
               disabled={editingKey !== ''}
@@ -203,7 +205,7 @@ const Categorylist = () => {
               style={{ marginRight: 8 }}
             />
             <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteCategory(record.key)} okText="Sí" cancelText="No">
-              <button className="ms-3 fs-3 text-danger bg-transparent border-0">
+              <button className="square-button">
                 <AiFillDelete />
               </button>
             </Popconfirm>
@@ -290,4 +292,4 @@ const Categorylist = () => {
   );
 };
 
-export default Categorylist;
+export default Rollist;

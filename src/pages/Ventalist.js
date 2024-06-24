@@ -58,7 +58,7 @@ const Ventalist = () => {
 
   const columns = [
     {
-      title: "ID Cajera",
+      title: "Nombre cajera",
       dataIndex: "id_cajera",
       key: "id_cajera",
       render: (id_cajera) => {
@@ -71,7 +71,7 @@ const Ventalist = () => {
       },
     },
     {
-      title: "ID Cliente",
+      title: "Nombre Cliente",
       dataIndex: "id_cliente",
       key: "id_cliente",
       render: (id_cliente) => {
@@ -80,6 +80,19 @@ const Ventalist = () => {
         );
         return usuario
           ? usuario.nombre
+          : "Cliente no encontrado";
+      },
+    },
+    {
+      title: "Cédula",
+      dataIndex: "id_cliente",
+      key: "id_cliente",
+      render: (id_cliente) => {
+        const usuario = userState.find(
+          (u) => u._id === id_cliente
+        );
+        return usuario
+          ? usuario.cedula
           : "Cliente no encontrado";
       },
     },

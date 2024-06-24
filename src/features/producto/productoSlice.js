@@ -118,7 +118,7 @@ export const productoSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.response.data.message;
       })
       .addCase(deleteAProduct.fulfilled, (state, action) => {
         state.isLoading = false;

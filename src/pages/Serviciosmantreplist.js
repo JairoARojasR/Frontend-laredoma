@@ -12,6 +12,9 @@ import productService from "../features/producto/productoService";
 import { createServiciomantrep, deleteServiciomantrep, getServiciosmantrep, resetState, updateServiciomantrep } from "../features/serviciosmantrep/serviciosmantrepSlice";
 import CustomModal from "../components/CustomModal";
 import { unwrapResult } from '@reduxjs/toolkit';
+import "../styles/Botones.css"
+import ButtonCustom from "../components/ButtonCustom";
+
 
 const EditableCell = ({
   editing,
@@ -221,7 +224,7 @@ const Serviciosmantreplist = () => {
           </span>
         ) : (
           <span>
-            <Button
+            <ButtonCustom
               icon={<EditOutlined />}
               onClick={() => edit(record)}
               disabled={editingKey !== ''}
@@ -229,7 +232,7 @@ const Serviciosmantreplist = () => {
               style={{ marginRight: 8 }}
             />
              <Popconfirm title="¿Seguro de eliminar?" onConfirm={() => handledeleteServicios(record.key)} okText="Sí" cancelText="No">
-              <button className="ms-3 fs-3 text-danger bg-transparent border-0">
+              <button className="square-button">
                 <AiFillDelete />
               </button>
             </Popconfirm> 

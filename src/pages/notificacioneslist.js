@@ -37,7 +37,6 @@ const ViewProfileAdmin = () => {
           renderItem={item => (
             <List.Item>
               <List.Item.Meta
-                title={`Producto ID: ${item.producto_id}`}
                 description={item.mensaje}
               />
             </List.Item>

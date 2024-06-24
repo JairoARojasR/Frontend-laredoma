@@ -35,6 +35,7 @@ import DetalleProducto from "./pages/DetalleProducto";
  import DetalleVenta from "./pages/DetalleVenta.js";
  import verProveedor from "./pages/VerProveedor.js";
  import ViewProveedor from "./pages/VerProveedor.js"
+ import ViewCliente from "./pages/VerCliente.js"
 
 export const RecoveryContext = createContext();
 
@@ -81,6 +82,7 @@ function App() {
             <Route path="/admin" element={<MainLayout />}>
               <Route index element={<Userlist />} />
               <Route path="usuarios" element={<Userlist />} /> 
+              <Route path="ver-cliente/:id" element={<ViewCliente />} />        
               <Route path="lista-categorias" element={<Categorialist />} />
               <Route path="lista-marcas-de-autos" element={<Marcaautolist />} />
               <Route path="lista-servicios-mantenimiento-y-reparacion" element={<Serviciosmantreplist />} />

@@ -1,0 +1,54 @@
+
+.boton-bonito {
+    margin-top: 30px;
+    background-color: #001529; 
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+    box-shadow: 0 4px 10px rgba(0, 21, 41, 0.3); 
+  }
+  
+  .boton-bonito:hover {
+    background-color: #3457BA; 
+  }
+  
+  .boton-bonito:focus {
+    outline: none; 
+  }
+  
+  .boton-bonito:active {
+    transform: translateY(1px); 
+  }
+
+.square-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;  
+  height: 32px; 
+  background-color: #dc3545; 
+  border: none;
+  border-radius: 15px; 
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-left: 10px; 
+}
+
+.square-button:hover {
+  background-color: #bb2d3b; 
+}
+
+.square-button svg {
+  color: black; 
+  font-size: 20px; 
+}
+
+.square-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.5); /* Efecto de enfoque */
+}

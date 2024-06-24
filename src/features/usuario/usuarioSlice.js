@@ -209,7 +209,7 @@ export const usuarioSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload;
+        state.message = action.payload.response.data.message;
         state.isExisting = true; 
       })
 
@@ -266,7 +266,7 @@ export const usuarioSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.response.data.message;
       })
 
       .addCase(updateSellerByEmail.pending, (state) => {
@@ -298,7 +298,7 @@ export const usuarioSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.response.data.message;
       })
       .addCase(getAUser.pending, (state) => {
         state.isLoading = true;

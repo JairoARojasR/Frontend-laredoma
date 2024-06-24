@@ -184,6 +184,7 @@ const Agregarproducto = () => {
     if (isSuccess && createdProduct && !isExisting) {
       toast.success("Producto agregado exitosamente!");
       formik.resetForm();
+      setImagenes([]); // Limpiar las imágenes después de agregar un producto
       setShowDiscountFields(false);
     }
     if (isSuccess && updatedProduct) {
@@ -191,7 +192,7 @@ const Agregarproducto = () => {
       navigate("/admin/lista-productos");
     }
 
-    if (isError && message === "ERROR PERMISOS") {
+    if (isError && message === "ERROR PERMISOS" || isExisting) {
       toast.error(
         "Error no tienes permisos necesarios para realizar esta acción"
       );
@@ -199,8 +200,10 @@ const Agregarproducto = () => {
     }
 
     if (isError && !isExisting) {
-      toast.error("Algo salio mal!");
-    }
+      toast.error(
+        "Error no tienes permisos necesarios para realizar esta acción"
+      );
+      return;    }
 
     if (isExisting) {
       toast.error(
@@ -492,7 +495,7 @@ const Agregarproducto = () => {
                   </div>
                   <CustomInput
                     type="number"
-                    label="Ingrese la referencia del producto"
+                    label="ej. 123434"
                     onChng={(e) => {
                       formik.handleChange("referencia")(e);
                     }}
@@ -523,7 +526,7 @@ const Agregarproducto = () => {
                     <label>Ubicación en el Producto</label>
                     <Popover
                       content={<a onClick={hide0}>Cerrar</a>}
-                      title="Por favor, verifica el código de estante antes de ingresarlo"
+                      title="Por favor, escribe la ubicación del Estante"
                       trigger="click"
                       open={open0}
                       onOpenChange={handleOpenChange0}

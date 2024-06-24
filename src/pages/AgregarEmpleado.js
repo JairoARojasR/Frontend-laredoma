@@ -3,6 +3,7 @@ import CustomInput from "../components/CustomInput";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "../styles/Botones.css"
 import {
   Button,
   Form,
@@ -56,7 +57,9 @@ const labelStyles = {
   fontWeight: "500",
   fontSize: "medium",
   margin: "13px 0",
-  backgroundColor: "#E7E9FE",
+  backgroundColor: "#e6e950", 
+  color: "#0000000", 
+  boxShadow: "0 4px 10px rgba(0, 21, 41, 0.3)", 
   padding: "2px 10px",
   borderRadius: "15px",
 };
@@ -380,7 +383,7 @@ const AgregarEmpleado = () => {
           </div>
 
           <button
-            className="btn btn-success border-0 rounded-3 my-5"
+            className="boton-bonito"
             type="submit"
           >
             {getUserId !== undefined ? "Editar" : "Agregar"} Empleado
@@ -389,7 +392,7 @@ const AgregarEmpleado = () => {
           {getUserId !== undefined && (
             <button
               style={{ marginLeft: "15px" }}
-              className="btn btn-secondary border-0 rounded-3 my-5"
+              className="boton-bonito"
               type="button"
               onClick={goBack}
             >

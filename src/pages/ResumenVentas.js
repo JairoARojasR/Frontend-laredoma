@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Bar, Pie, Line, Doughnut } from "react-chartjs-2";
 import { useSelector, useDispatch } from "react-redux";
+import "../styles/ResumenVentas.css";
+import VentasSVG from '../images/money-bill.svg'; // Asegúrate de que la ruta sea correcta
 import dayjs from "dayjs";
 import {
   Chart as ChartJS,
@@ -16,6 +18,11 @@ import {
 } from "chart.js";
 import { getVentas } from "../features/venta/ventaSlice";
 import {
+  getUsers,
+  getAUser,
+  deleteAUser,
+} from "../features/usuario/usuarioSlice";
+import {
   createProducts,
   resetState,
   updateAProduct,
@@ -23,6 +30,7 @@ import {
   getProducts,
 } from "../features/producto/productoSlice";
 import { getCategorias } from "../features/categoria/categoriaSlice";
+
 
 // Registrar todos los elementos necesarios en ChartJS
 ChartJS.register(
@@ -42,16 +50,20 @@ const ResumenVentas = () => {
   const [ventasPorProducto, setVentasPorProducto] = useState({});
   const [ventasSemanales, setVentasSemanales] = useState({});
   const [ventasPorCategoria, setVentasPorCategoria] = useState({});
+  const [manoDeObraPorMecanico, setManoDeObraPorMecanico] = useState({});
   const [totalVentas, setTotalVentas] = useState(0); // Estado para almacenar el total de ventas
   const ventas = useSelector((state) => state.venta.ventas);
   const productoState = useSelector((state) => state.producto.products);
   const catState = useSelector((state) => state.categoria.categorias);
+  const userState = useSelector((state) => state.user.users);
+  const [totalManoDeObra, setTotalManoDeObra] = useState(0); 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getVentas());
     dispatch(getProducts());
     dispatch(getCategorias());
+    dispatch(getUsers())
   }, [dispatch]);
 
   useEffect(() => {
@@ -60,6 +72,7 @@ const ResumenVentas = () => {
     generateVentasPorProducto(ventas);
     generateVentasSemanales(ventas);
     generateVentasPorCategoria(ventas);
+    generateManoDeObraPorMecanico(ventas); // Agregar esta línea para calcular mano de obra por mecánico
     calculateTotalVentas(ventas); // Calcular el total de ventas cuando cambian las ventas
   }, [ventas]);
 
@@ -97,6 +110,34 @@ const ResumenVentas = () => {
     setVentasPorProducto(ventasPorProducto);
   };
 
+  const generateManoDeObraPorMecanico = (ventas) => {
+    const manoDeObra = {};
+    let totalManoDeObra = 0;
+    
+    ventas.forEach((item) => {
+      item.servicios_prestados.forEach((servicio) => {
+        const fecha = dayjs(item.venta.fecha).format("DD-MM-YYYY");
+        const mecanico = userState.find(usuario => usuario._id === servicio.id_mecanico);
+        const precioMObra = servicio.precio_manoDeObra;
+        totalManoDeObra += precioMObra; // Sumar al total de mano de obra
+        
+        if (!manoDeObra[fecha]) {
+          manoDeObra[fecha] = {};
+        }
+        if (manoDeObra[fecha][mecanico]) {
+          manoDeObra[fecha][mecanico.nombre] += precioMObra;
+        } else {
+          manoDeObra[fecha][mecanico.nombre] = precioMObra;
+        }
+      });
+    });
+  
+    setManoDeObraPorMecanico(manoDeObra);
+    setTotalManoDeObra(totalManoDeObra); // Actualizar el estado del total de mano de obra
+  };
+  
+  
+
   const generateVentasSemanales = (ventas) => {
     const ventasSemanales = {};
     ventas.forEach((item) => {
@@ -117,7 +158,7 @@ const ResumenVentas = () => {
       if (categoria) {
         acc[producto._id] = categoria.nombre;
       } else {
-        acc[producto._id] = "Desconocida"; // Manejar categorías no encontradas
+        acc[producto._id] = "Desconocida"; 
       }
       return acc;
     }, {});
@@ -238,6 +279,42 @@ const ResumenVentas = () => {
       },
     ],
   };
+  
+  const colors = [
+    "rgba(255, 99, 132, 0.6)",
+    "rgba(54, 162, 235, 0.6)",
+    "rgba(255, 206, 86, 0.6)",
+    "rgba(75, 192, 192, 0.6)",
+    "rgba(153, 102, 255, 0.6)",
+    "rgba(255, 159, 64, 0.6)",
+    // Añade más colores si tienes más mecánicos
+  ];
+  
+  const borderColors = [
+    "rgba(255, 99, 132, 1)",
+    "rgba(54, 162, 235, 1)",
+    "rgba(255, 206, 86, 1)",
+    "rgba(75, 192, 192, 1)",
+    "rgba(153, 102, 255, 1)",
+    "rgba(255, 159, 64, 1)",
+    // Añade más colores si tienes más mecánicos
+  ];
+  
+  const manoDeObraData = {
+    labels: Object.keys(manoDeObraPorMecanico),
+    datasets: manoDeObraPorMecanico
+      ? Object.keys(manoDeObraPorMecanico[Object.keys(manoDeObraPorMecanico)[0]] || {}).map((mecanicoId, index) => ({
+          label: mecanicoId,
+          backgroundColor: colors[index % colors.length],
+          borderColor: borderColors[index % borderColors.length],
+          borderWidth: 1,
+          hoverBackgroundColor: "rgba(75,10,1,0.6)",
+          hoverBorderColor: "rgba(75,192,192,1)",
+          data: Object.keys(manoDeObraPorMecanico).map(fecha => manoDeObraPorMecanico[fecha][mecanicoId] || 0),
+        }))
+      : [],
+  };
+  
 
   const options = {
     scales: {
@@ -248,32 +325,46 @@ const ResumenVentas = () => {
   };
 
   return (
-    <div className="container">
-
-    <h1 className="mb-4">Total de Ventas: ${totalVentas}</h1>
-
-
-      <h1 className="mb-4">Resumen de Ventas por Fecha</h1>
-
-      <div className="bar-chart-container mb-4">
-        <Bar data={chartData} options={options} />
+    <div className="titulo">
+      <h1>ESTADISTICAS DE VENTAS AYS LA REDOMA</h1>
+      <div className="totales-container">
+        <div className="Ventas-totales">
+          <h1>
+            <img src={VentasSVG} alt="Ventas" style={{ width: '40px', marginLeft: '20px', marginRight: '10px' }} />
+            Total de Ventas: ${totalVentas.toLocaleString('es-ES')}
+          </h1>
+        </div>
+        <div className="ManoDeObra-totales">
+          <h1>
+            <img src={VentasSVG} alt="Mano de Obra" style={{ width: '40px', marginLeft: '20px', marginRight: '10px' }} />
+            Total Mano de Obra: ${totalManoDeObra.toLocaleString('es-ES')}
+          </h1>
+        </div>
       </div>
-
-      <h2 className="mb-4">Distribución de Ventas por Producto</h2>
-
-      <div className="pie-chart-container mb-4">
-        <Pie data={pieData} />
+      <div className="container">
+        <div className="grid-container">
+          <div className="chart-container">
+            <h2 className="mb-4">Resumen de Ventas por Fecha</h2>
+            <Bar data={chartData} options={options} />
+          </div>
+          <div className="chart-container">
+            <h2 className="mb-4">Mano de Obra por Mecánico</h2>
+            <Bar data={manoDeObraData} options={options} />
+          </div>
+          <div className="chart-container">
+            <h2 className="mb-4">Distribución de Ventas por Producto</h2>
+            <Pie data={pieData} />
+          </div>
+          <div className="chart-container">
+            <h2 className="mb-4">Distribución de Ventas por Categoría</h2>
+            <Doughnut data={doughnutData} />
+          </div>
+        </div>
       </div>
-
-      <h2 className="mb-4">Distribución de Ventas por Categoría</h2>
-
-      <div className="doughnut-chart-container mb-4">
-        <Doughnut data={doughnutData} />
-      </div>
-
-      <h1 className="mb-4">Total de Ventas: ${totalVentas}</h1>
     </div>
   );
+  
+  
 };
 
 export default ResumenVentas;

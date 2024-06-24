@@ -23,8 +23,8 @@ export default function Recovered() {
 
               <div>
               <h2>
-                  ¡Bienvenido a casa!{" "}
-                  <a href="/login">Volver al inicio</a>
+                  ¡Bienvenido a Autorepuestos la Redoma!{" "}
+                  <a href="/">Volver al inicio</a>
                 </h2>
               </div>
             </form>

@@ -11,6 +11,12 @@
   height: 120px;
 }
 
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+
+
 .dropzone:hover {
   background-color: #e2e2e2;
   transition: 0.2s;

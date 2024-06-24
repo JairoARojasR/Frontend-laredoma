@@ -26,7 +26,7 @@ export default function () {
     storedOTP = localStorage.getItem("otp");
     console.log("otp: " +storedOTP + " email: " + storedEmail);
     axios
-      .post(`${base_url}usuario/send_recovery_email`, {
+      .post(`${base_url}persona/send_recovery_email`, {
         OTP: OTPNuevo,
         recipient_email: storedEmail,
       })

@@ -85,7 +85,7 @@ export const rolSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.response.data.message;
       })
       .addCase(createRol.pending, (state) => {
         state.isLoading = true;
@@ -102,7 +102,7 @@ export const rolSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.response.data.message;
         state.isExisting = true;
       })
       .addCase(updateRol.pending, (state) => {

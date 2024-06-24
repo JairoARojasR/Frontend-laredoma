@@ -125,6 +125,7 @@ const AgregarVenta = () => {
   };
 
   const newUser = useSelector((state) => state.user);
+  
   const { createdUser } = newUser;
 
   useEffect(() => {
@@ -412,6 +413,7 @@ const AgregarVenta = () => {
                 onBlur={formik.handleBlur("id_cajera")}
                 style={{ width: "100%" }}
               >
+                <Option value="">Seleccione una Cajera</Option>
                 {userState.map((user) => {
                   if (user.id_rol === "6669074f41dcdb08eee0128e") {
                     return (
@@ -428,23 +430,28 @@ const AgregarVenta = () => {
                   }
                 })}
               </Select>
-              {formik.touched.id_cajera && formik.errors.id_cajera && (
-                <div className="error_message">{formik.errors.id_cajera}</div>
-              )}
+              <div className="error">
+                {formik.touched.id_cajera && formik.errors.id_cajera}
+              </div>
 
               <label>Cedula del Cliente</label>
               <CustomInput
-                type="text"
+                type="number"
                 val={formik.values.cedula_cliente}
                 onChng={(e) =>
                   formik.setFieldValue("cedula_cliente", e.target.value)
                 }
                 onBlr={formik.handleBlur("cedula_cliente")}
+                placeholder="Por favor, escribe la cédula"
               />
+              <div className="error">
+                {formik.touched.cedula_cliente && formik.errors.cedula_cliente}
+              </div>
 
               <label>Correo del Cliente</label>
               <CustomInput
                 type="text"
+                label="Se llena automáticamente al buscar un cliente"
                 val={formik.values.correo_cliente}
                 onChng={(e) =>
                   formik.setFieldValue("correo_cliente", e.target.value)
@@ -460,13 +467,14 @@ const AgregarVenta = () => {
                 onBlur={formik.handleBlur("metodo_pago")}
                 style={{ width: "100%" }}
               >
+                <Option value="">Seleccione Metodo de Pago</Option>
                 <Option value="Efectivo">Efectivo</Option>
                 <Option value="Tarjeta">Tarjeta</Option>
                 <Option value="Transferencia">Transferencia</Option>
               </Select>
-              {formik.touched.metodo_pago && formik.errors.metodo_pago && (
-                <div className="error_message">{formik.errors.metodo_pago}</div>
-              )}
+              <div className="error">
+                {formik.touched.metodo_pago && formik.errors.metodo_pago}
+              </div>
             </div>
             <div className="columna2">
               <label>Buscar Cliente</label>
@@ -511,6 +519,7 @@ const AgregarVenta = () => {
                   onBlur={formik.handleBlur("id_cliente")}
                   style={{ width: "100%" }}
                 >
+                  <Option value="">Buscar cliente por su Cédula</Option>
                   {userState.map((user) => {
                     if (user.id_rol === "666e14291f37b8e8b13ad363") {
                       return (
@@ -627,12 +636,18 @@ const AgregarVenta = () => {
               <CustomInput
                 type="text"
                 val={formik.values.nombre_cliente}
+                label="Se llena automáticamente al buscar un cliente"
                 onChng={(e) =>
                   formik.setFieldValue("nombre_cliente", e.target.value)
                 }
                 onBlr={formik.handleBlur("nombre_cliente")}
               />
+              <div className="error">
+                {formik.touched.nombre_cliente && formik.errors.nombre_cliente}
+              </div>
+
               <label>Número de telefono del Cliente</label>
+
               <CustomInput
                 type="number"
                 val={formik.values.telefono_cliente}
@@ -676,6 +691,7 @@ const AgregarVenta = () => {
                 }}
                 style={{ width: "100%" }}
               >
+                <Option value="">Seleccione un Producto</Option>
                 {productoState.map((producto) => (
                   <Option
                     key={producto._id}
@@ -777,7 +793,6 @@ const AgregarVenta = () => {
               <label>Nombre del Servicio</label>
               <Select
                 showSearch
-                placeholder="Selecciona un servicio"
                 optionFilterProp="children"
                 value={nombreServicio}
                 onChange={(value) => {
@@ -785,6 +800,7 @@ const AgregarVenta = () => {
                 }}
                 style={{ width: "100%" }}
               >
+                <Option value="">Seleccione un Servicio</Option>
                 {servicioState.map((servicio) => (
                   <Option key={servicio._id} value={servicio._id}>
                     {servicio.nombre}
@@ -795,7 +811,7 @@ const AgregarVenta = () => {
               <label>Nombre del Mecanico</label>
               <Select
                 showSearch
-                placeholder="Selecciona un Mecanico"
+                label="Por favor escribe la placa Ej. ABE123"
                 optionFilterProp="children"
                 value={mecanico}
                 onChange={(value) => {
@@ -826,6 +842,7 @@ const AgregarVenta = () => {
               <label>Placa Carro</label>
               <CustomInput
                 type="text"
+                label="Por favor escribe la placa Ej. ABE123"
                 val={placaCarro}
                 onChng={handlePlacaCarroChange}
                 onBlr={formik.handleBlur("placaCarro")}

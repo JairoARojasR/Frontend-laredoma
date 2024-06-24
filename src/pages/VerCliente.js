@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { Typography } from "antd";
 import { getAUser } from "../features/usuario/usuarioSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import "../styles/Botones.css"
 
 const { Title } = Typography;
 
-const VerProveedor = () => {
+const VerCliente = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,14 +29,15 @@ const VerProveedor = () => {
     padding: "2px 10px",
     borderRadius: "15px",
   };
-
+  
+  
   useEffect(() => {
     dispatch(getAUser(getUserCorreo));
   }, [dispatch, getUserCorreo]);
 
   return (
     <div>
-      <h3 className="mb-4  title">Detalles del Proveedor</h3>
+      <h3 className="mb-4  title">Detalles del Cliente</h3>
 
       <div style={{ background: "#fff", padding: 24 }}>
         <div>
@@ -55,7 +57,7 @@ const VerProveedor = () => {
           <button
             onClick={goBack}
             className="boton-bonito"
-          >
+            >
             Regresar
           </button>
         </div>
@@ -64,4 +66,4 @@ const VerProveedor = () => {
   );
 };
 
-export default VerProveedor;
+export default VerCliente;

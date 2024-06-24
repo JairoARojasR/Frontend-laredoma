@@ -36,7 +36,6 @@ import {
 import { Layout, Menu, theme, Avatar, Badge, message } from "antd";
 import { useNavigate } from "react-router-dom";
 
-import Logo from "../images/logo madais.png";
 import userSvg from "../images/user-solid.svg";
 import "../styles/custom.css";
 const { Header, Sider, Content } = Layout;
