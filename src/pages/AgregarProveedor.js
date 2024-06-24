@@ -113,7 +113,6 @@ const AgregarProveedor = () => {
        //dispatch(resetState());
       } else {
         dispatch(createProveedor(values));
-        formik.resetForm();
         setTimeout(() => {
           dispatch(resetState());
         }, 3000);
@@ -218,7 +217,6 @@ const AgregarProveedor = () => {
           </div>
 
           <button
-            className="boton-bonito"
             type="submit"
           >
             {getUserId !== undefined ? "Editar" : "Agregar"} Proveedor
@@ -226,7 +224,6 @@ const AgregarProveedor = () => {
 
           {getUserId !== undefined && (
             <button style={{marginLeft:'15px'}}
-            className="boton-bonito"
               type="button"
               onClick={goBack}
             >

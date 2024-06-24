@@ -123,7 +123,7 @@ const AgregarEmpleado = () => {
     }
     if (isSuccess && updatedUser) {
       toast.success("Empleado actualizado exitosamente!");
-      //navigate("/admin/lista-vendedores");
+      navigate("/admin/lista-empleados");
     }
     if (isError && message === "ERROR PERMISOS") {
       toast.error(
@@ -302,7 +302,7 @@ const AgregarEmpleado = () => {
           <label style={labelStyles}>Número Telefonico del Empleado</label>
           <CustomInput
             type="number"
-            label="Número Telefonico del Proveedor"
+            label="Número Telefonico del Empleado"
             placeholder="Ingrese el Telefono"
             onChng={(e) => {
               formik.handleChange("telefono")(e.target.value);
